@@ -1,0 +1,588 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../widgets/top_navigation_bar.dart';
+import '../../widgets/custom_button.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/custom_drawer.dart';
+import '../../widgets/bottom_navigation_bar.dart';
+import '../../providers/order_provider.dart';
+import '../../models/order.dart';
+import '../../widgets/guide_wrapper.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+class OrderStatusScreen extends ConsumerWidget {
+  final String? orderId;
+  const OrderStatusScreen({super.key, this.orderId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final ordersAsync = ref.watch(userOrdersProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.fondoPrincipal,
+      drawer: CustomDrawer(),
+      appBar: TopNavigationBar(
+        titleWidget: Text(
+          'Estado del pedido',
+          style: theme.textTheme.displayMedium?.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textoPrincipal,
+          ),
+        ),
+        leadingIcon: Icons.menu,
+        onLeadingPressed: null,
+        showActionIcon: false,
+      ),
+      body: ordersAsync.when(
+        data: (orders) {
+          if (orders.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 64,
+                    color: AppColors.sombras,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No tienes pedidos activos',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.sombras,
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  SizedBox(
+                    width: 200,
+                    child: CustomButton(
+                      text: 'Ir a comprar',
+                      onPressed: () => context.go('/home'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final order = orderId != null
+              ? orders.firstWhere(
+                  (o) => o.id == orderId,
+                  orElse: () => orders.first,
+                )
+              : orders.first;
+          final itemQuantity = order.items.fold<int>(
+            0,
+            (prev, item) => prev + item.quantity,
+          );
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.blanco,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.sombras.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 32.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GuideWrapper(
+                        title: 'reconocimiento_vs_recuerdo'.tr(),
+                        description:
+                            'Proveer un ID de orden claro y truncado cumple con la heurística de "Reconocimiento antes que recuerdo", dando al usuario control y confianza sobre su transacción.',
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Orden: ${order.id.length > 8 ? order.id.substring(0, 8).toUpperCase() : order.id.toUpperCase()}',
+                          style: theme.textTheme.displayMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: AppColors.textoPrincipal,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      // Bloque de Resumen Corto
+                      _buildShortSummaryBlock(context, order, itemQuantity),
+
+                      SizedBox(height: 24),
+
+                      // Bloque de Línea de Tiempo
+                      GuideWrapper(
+                        title: 'visibilidad_del_estado_del_sistema'.tr(),
+                        description:
+                            'Mantener al usuario informado sobre lo que está ocurriendo a través de retroalimentación apropiada en tiempo razonable (Heurística de Nielsen #1).',
+                        alignment: Alignment.topRight,
+                        child: _buildTimelineBlock(context, order.status),
+                      ),
+
+                      SizedBox(height: 32),
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            if (order.status.toLowerCase() == 'entregado')
+                              Tooltip(
+                                message:
+                                    'Danos tu opinión sobre el servicio para seguir mejorando',
+                                child: CustomButton(
+                                  text: 'Evaluar mi experiencia',
+                                  color: ButtonColor.naranja,
+                                  icon: Icons.star_outline,
+                                  onPressed: () =>
+                                      context.push('/survey/${order.id}'),
+                                ),
+                              ),
+                            if (order.status.toLowerCase() == 'entregado')
+                              SizedBox(height: 12),
+                            Tooltip(
+                              message: 'Habla con nuestro equipo de soporte',
+                              child: CustomButton(
+                                text: 'Contactar con soporte',
+                                type: ButtonType.alternativo,
+                                color: ButtonColor.naranja,
+                                icon: Icons.chat_bubble_outline,
+                                onPressed: () => context.push('/support'),
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Tooltip(
+                              message:
+                                  'Sigue el recorrido de tu pedido en tiempo real',
+                              child: CustomButton(
+                                text: 'Ver mapa',
+                                type: ButtonType.alternativo,
+                                color: ButtonColor.naranja,
+                                icon: Icons.location_on_outlined,
+                                onPressed: () => _showMapModal(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (e, s) => Center(child: Text('Error al cargar pedidos: $e')),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 0, // Por defecto Inicio
+        onTap: (idx) {
+          if (idx == 0) context.go('/home');
+          if (idx == 1) context.push('/cart');
+          if (idx == 2) context.push('/history');
+          if (idx == 3) context.push('/support');
+        },
+      ),
+    );
+  }
+
+  Widget _buildShortSummaryBlock(
+    BuildContext context,
+    OrderModel order,
+    int quantity,
+  ) {
+    final theme = Theme.of(context);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'es_VE',
+      symbol: '\$',
+      decimalDigits: 2,
+    );
+    final dateFormat = DateFormat('dd/MM/yyyy HH:mm');
+    final estimatedDate = dateFormat.format(
+      order.createdAt.add(Duration(hours: 1)),
+    );
+
+    return GuideWrapper(
+      title: 'agrupación_y_carga_cognitiva'.tr(),
+      description:
+          'Agrupar la información esencial (artículos, total, entrega) en una tarjeta reduce la carga cognitiva del usuario, aplicando la Ley de Miller y principios de Gestalt.',
+      alignment: Alignment.topRight,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.fondoTarjetas,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.sombras.withValues(alpha: 0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Resumen de orden',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textoPrincipal,
+                  ),
+                ),
+                Text(
+                  '$quantity artículos',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.naranjaUnimet,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            Divider(color: AppColors.verdeSaman, thickness: 1.5),
+            SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total:',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppColors.textoPrincipal,
+                  ),
+                ),
+                Text(
+                  currencyFormat.format(order.total),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: AppColors.verdeSaman,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'Entrega estimada:\n$estimatedDate hr',
+                textAlign: TextAlign.right,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.sombras,
+                  fontSize: 10,
+                  height: 1.3,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimelineBlock(BuildContext context, String status) {
+    final st = status.toLowerCase();
+
+    // Mapeo lógico de estados
+    // 1. Pago confirmado (siempre activo si llegamos aquí)
+    // 2. En preparación (status: 'procesando' o 'preparando' o más adelante)
+    // 3. Enviado (status: 'enviado' o más adelante)
+    // 4. Entregado (status: 'entregado')
+
+    final step1Active =
+        st == 'pago confirmado' ||
+        st == 'confirmado' ||
+        st == 'preparando' ||
+        st == 'enviado' ||
+        st == 'entregado';
+    final step2Active =
+        st == 'preparando' || st == 'enviado' || st == 'entregado';
+    final step3Active = st == 'enviado' || st == 'entregado';
+    final step4Active = st == 'entregado';
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppColors.fondoTarjetas,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.sombras.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        children: [
+          _buildTimelineStep(
+            context,
+            title: 'pago_confirmado'.tr(),
+            subtitle: 'tu_pago_fue_verificado'.tr(),
+            icon: Icons.check_circle,
+            iconColor: Colors.green[700]!,
+            isActive: step1Active,
+          ),
+          _buildTimelineStep(
+            context,
+            title: 'en_preparación'.tr(),
+            subtitle: 'estamos_preparando_tu_pedido'.tr(),
+            icon: Icons.shopping_bag,
+            iconColor: step2Active
+                ? AppColors.azulSistemas
+                : AppColors.sombras.withValues(alpha: 0.4),
+            isActive: step2Active,
+          ),
+          _buildTimelineStep(
+            context,
+            title: 'enviado'.tr(),
+            subtitle: 'el_repartidor_va_en_camino'.tr(),
+            icon: Icons.moped,
+            iconColor: step3Active
+                ? AppColors.naranjaUnimet
+                : AppColors.sombras.withValues(alpha: 0.4),
+            isActive: step3Active,
+          ),
+          _buildTimelineStep(
+            context,
+            title: 'entregado'.tr(),
+            subtitle: 'recibiste_tu_pedido_con_éxito'.tr(),
+            icon: Icons.home,
+            iconColor: step4Active
+                ? Colors.green[700]!
+                : AppColors.sombras.withValues(alpha: 0.4),
+            isActive: step4Active,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimelineStep(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required bool isActive,
+    bool isLast = false,
+  }) {
+    final theme = Theme.of(context);
+    // Cuadro naranja si ya pasó por ahí o es el actual
+    final bgColor = isActive
+        ? AppColors.naranjaUnimet
+        : AppColors.sombras.withValues(alpha: 0.1);
+    final activeIconColor = isActive
+        ? Colors.white
+        : AppColors.sombras.withValues(alpha: 0.4);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 24.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: activeIconColor, size: 24),
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2),
+                Text(
+                  title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: isActive
+                        ? AppColors.textoPrincipal
+                        : AppColors.sombras,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 12,
+                    color: AppColors.sombras,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMapModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Ruta de entrega: Chacao - Altamira',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textoPrincipal,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'El repartidor se encuentra en la Av. Francisco de Miranda',
+              style: TextStyle(fontSize: 12, color: AppColors.sombras),
+            ),
+            SizedBox(height: 16),
+            Expanded(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        image: DecorationImage(
+                          image: AssetImage(
+                            'assets/images/chacao_mall_map.png',
+                          ),
+                          fit: BoxFit.cover,
+                          opacity: 0.8,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Marcador del repartidor animado (simulado)
+                  Center(
+                    child: TweenAnimationBuilder(
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: Duration(seconds: 2),
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, -20 * (1 - value)),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.naranjaUnimet,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Tu pedido',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.location_on,
+                                color: AppColors.naranjaUnimet,
+                                size: 40,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: AppColors.fondoPrincipal,
+                        child: Icon(
+                          Icons.person,
+                          color: AppColors.naranjaUnimet,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Carlos Repartidor',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            'En camino - Honda Cargo',
+                            style: TextStyle(
+                              color: AppColors.sombras,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.phone,
+                          color: AppColors.verdeSaman,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  CustomButton(
+                    text: 'Cerrar',
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

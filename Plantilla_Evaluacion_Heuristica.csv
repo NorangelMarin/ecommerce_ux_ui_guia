@@ -1,0 +1,18 @@
+Pantalla / Flujo;Heurï¿½ï¿½stica de Nie;Pregunta Guï¿½;ýýCumple? (Sýý/No/NA);Severidad (0-4);Observaciones / Problemas;Acciï¿½ï¿½n / Soluciï¿½ï¿½n Rec
+Todas;1. Visibilidad del estado del sistema;ýýEl usuario sabe en todo momento dýýnde estýý y quýý estýý pasando (ej. spinners de carga, progreso del checkout)?;;;;
+Todas;2. Relaciï¿½ï¿½n con el mundo ;"ýýEl lenguaje, týýrminos e iconos son familiares para el usuario (ej. icono de carrito, ""Comprar"")?";;;;
+Navegaciï¿½;3. Control y libertad del usuario;ýýHay botones claros para regresar, cancelar o cerrar ventanas si el usuario se equivoca?;;;;
+Diseï¿½ï¿½o ;4. Consistencia y estï¿½ï¿½nd;ýýLos colores, botones y tipografýýas mantienen el mismo estilo en toda la aplicaciýýn?;;;;
+Formularios;5. Prevenciï¿½ï¿½n de err;ýýSe previenen errores antes de que ocurran? (ej. validar correos, deshabilitar botýýn si faltan datos);;;;
+General;6. Reconocer en lugar de recordar;ýýEl usuario tiene las opciones a la vista sin necesidad de memorizar informaciýýn de pantallas anteriores?;;;;
+Checkout / Perfil;7. Flexibilidad y eficiencia de uso;ýýHay atajos para usuarios recurrentes? (ej. autocompletado, guardar direcciones, mýýtodos de pago);;;;
+Todas;8. Diseï¿½ï¿½o estï¿½ï¿½tico y min;ýýLas pantallas muestran solo la informaciýýn estrictamente necesaria y evitan el desorden visual?;;;;
+Manejo Errores;9. Diagnï¿½ï¿½stico y recuperaciï¿½ï¿½n de;ýýLos mensajes de error estýýn en lenguaje sencillo, indican el problema exacto y cýýmo solucionarlo?;;;;
+Soporte;10. Ayuda y documentaciï¿½;ýýExiste informaciýýn de soporte accesible en caso de dudas? (ej. FAQs, contacto);;;;
+;;;;;;
+INSTRUCCIONES DE SEVERIDAD:;;;;;;
+0 = No es un problema de usabilidad;;;;;;
+1 = Problema cosmï¿½ï¿½tico (arreglar si hay tie;;;;;;
+2 = Problema menor (baja prioridad);;;;;;
+3 = Problema mayor (alta prioridad, arreglar pronto);;;;;;
+4 = Catï¿½ï¿½strofe de usabilidad (imperativo arreglar antes de lan;;;;;;
