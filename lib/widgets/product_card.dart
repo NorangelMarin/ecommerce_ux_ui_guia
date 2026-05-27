@@ -55,11 +55,19 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildImagePlaceholder(BuildContext context) {
     if (imageUrl.isNotEmpty) {
-      return Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
-      );
+      if (imageUrl.startsWith('assets/')) {
+        return Image.asset(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildFallback(context),
+        );
+      } else {
+        return Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildFallback(context),
+        );
+      }
     }
     return _buildFallback(context);
   }
@@ -367,20 +375,33 @@ class ProductCard extends StatelessWidget {
                   width: 88,
                   height: 88,
                   color: AppColors.of(context).fondoTarjetas,
-                  child: Image.network(
-                    imageUrl.isNotEmpty
-                        ? imageUrl
-                        : 'https://images.unsplash.com/photo-1593998066526-65fcab3021a2?auto=format&fit=crop&w=400&q=80',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: AppColors.of(context).fondoTarjetas,
-                      child: Icon(
-                        Icons.shopping_bag,
-                        size: 40,
-                        color: AppColors.of(context).sombras,
-                      ),
-                    ),
-                  ),
+                  child: imageUrl.startsWith('assets/')
+                      ? Image.asset(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppColors.of(context).fondoTarjetas,
+                            child: Icon(
+                              Icons.shopping_bag,
+                              size: 40,
+                              color: AppColors.of(context).sombras,
+                            ),
+                          ),
+                        )
+                      : Image.network(
+                          imageUrl.isNotEmpty
+                              ? imageUrl
+                              : 'https://images.unsplash.com/photo-1593998066526-65fcab3021a2?auto=format&fit=crop&w=400&q=80',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppColors.of(context).fondoTarjetas,
+                            child: Icon(
+                              Icons.shopping_bag,
+                              size: 40,
+                              color: AppColors.of(context).sombras,
+                            ),
+                          ),
+                        ),
                 ),
               ),
             ),

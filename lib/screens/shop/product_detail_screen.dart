@@ -85,20 +85,33 @@ class ProductDetailScreen extends ConsumerWidget {
                     child: SizedBox(
                       width: double.infinity,
                       height: 280,
-                      child: Image.network(
-                        product.imageUrl.isNotEmpty
-                            ? product.imageUrl
-                            : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: AppColors.of(context).fondoTarjetas,
-                          child: Icon(
-                            Icons.image,
-                            size: 80,
-                            color: AppColors.of(context).sombras,
-                          ),
-                        ),
-                      ),
+                      child: product.imageUrl.startsWith('assets/')
+                          ? Image.asset(
+                              product.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                color: AppColors.of(context).fondoTarjetas,
+                                child: Icon(
+                                  Icons.image,
+                                  size: 80,
+                                  color: AppColors.of(context).sombras,
+                                ),
+                              ),
+                            )
+                          : Image.network(
+                              product.imageUrl.isNotEmpty
+                                  ? product.imageUrl
+                                  : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                color: AppColors.of(context).fondoTarjetas,
+                                child: Icon(
+                                  Icons.image,
+                                  size: 80,
+                                  color: AppColors.of(context).sombras,
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                   // Botón Zoom
@@ -698,16 +711,27 @@ class ProductDetailScreen extends ConsumerWidget {
                     maxScale: 5.0,
                     child: Hero(
                       tag: 'product_image_$imageUrl',
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Icon(
-                              Icons.image_not_supported,
-                              size: 80,
-                              color: Colors.white54,
+                      child: imageUrl.startsWith('assets/')
+                          ? Image.asset(
+                              imageUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.image_not_supported,
+                                    size: 80,
+                                    color: Colors.white54,
+                                  ),
+                            )
+                          : Image.network(
+                              imageUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.image_not_supported,
+                                    size: 80,
+                                    color: Colors.white54,
+                                  ),
                             ),
-                      ),
                     ),
                   ),
                 ),

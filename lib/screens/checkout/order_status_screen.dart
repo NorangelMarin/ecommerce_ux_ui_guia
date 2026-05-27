@@ -490,7 +490,7 @@ class OrderStatusScreen extends ConsumerWidget {
                         color: Colors.grey[200],
                         image: DecorationImage(
                           image: AssetImage(
-                            'assets/images/chacao_mall_map.png',
+                            'assets/images/delivery_map_clean.png',
                           ),
                           fit: BoxFit.cover,
                           opacity: 0.8,
