@@ -121,12 +121,10 @@ class OrderStatusScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: 24),
 
-                      // Bloque de Resumen Corto
                       _buildShortSummaryBlock(context, order, itemQuantity),
 
                       SizedBox(height: 24),
 
-                      // Bloque de Línea de Tiempo
                       GuideWrapper(
                         title: 'visibilidad_del_estado_del_sistema'.tr(),
                         description:

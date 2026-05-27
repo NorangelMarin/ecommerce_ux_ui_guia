@@ -89,11 +89,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               SizedBox(height: 20),
               
-              // Logo de la app (Figuras)
               Center(child: UnimetLogo(size: 80)),
               SizedBox(height: 32),
 
-              // Títulos
               Text('bienvenido_a_tu_gua_digital_interactiva'.tr(),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.displayLarge?.copyWith(
@@ -110,7 +108,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               SizedBox(height: 48),
               
-              // Inputs
               CustomTextField(
                 controller: _emailController,
                 label: 'correo_electrónico'.tr(),
@@ -140,7 +137,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               SizedBox(height: 40),
 
-              // Botones Principales
               _isLoading 
                   ? Center(child: CircularProgressIndicator(color: AppColors.of(context).naranjaUnimet))
                   : CustomButton(
@@ -151,7 +147,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
               SizedBox(height: 24),
 
-              // Divisor
               Row(
                 children: [
                   Expanded(
@@ -178,7 +173,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               SizedBox(height: 24),
 
-              // Botón Alternativo
               CustomButton(
                 text: 'acceder_con_google'.tr(),
                 type: ButtonType.alternativo,
@@ -187,7 +181,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               SizedBox(height: 48),
 
-              // Enlace final
               Center(
                 child: TextButton(
                   onPressed: () => context.go('/register'),

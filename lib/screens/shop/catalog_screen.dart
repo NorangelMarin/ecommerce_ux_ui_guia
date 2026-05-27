@@ -467,7 +467,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Título principal
               Padding(
                 padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
                 child: Text(
@@ -484,7 +483,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                 ),
               ),
 
-              // Fila de Resultados y Filtros
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(

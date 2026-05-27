@@ -59,7 +59,6 @@ class _SupportScreenState extends State<SupportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título Hero
             Text('estamos_aqu_para_ayudarte'.tr(),
               style: theme.textTheme.displayMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -177,7 +176,6 @@ class _SupportScreenState extends State<SupportScreen> {
 
             SizedBox(height: 32),
 
-            // Tarjeta Azul FAQ
             GuideWrapper(
               title: 'autoservicio_proactivo'.tr(),
               description: 'Destacar visualmente las Preguntas Frecuentes empodera a los usuarios a encontrar respuestas por sí mismos y disminuye drásticamente el volumen de tickets de soporte.',

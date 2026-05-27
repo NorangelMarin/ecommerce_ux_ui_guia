@@ -69,7 +69,6 @@ class _FaqScreenState extends State<FaqScreen> {
       ),
       body: Column(
         children: [
-          // Barra de búsqueda
           Padding(
             padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
             child: Container(
@@ -99,7 +98,6 @@ class _FaqScreenState extends State<FaqScreen> {
           ),
           SizedBox(height: 16),
 
-          // Lista de FAQs
           Expanded(
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -114,7 +112,6 @@ class _FaqScreenState extends State<FaqScreen> {
                   );
                 }),
                 SizedBox(height: 16),
-                // Bloque azul "¿Sigues con dudas?"
                 _buildSupportCard(context),
                 SizedBox(height: 16),
               ],

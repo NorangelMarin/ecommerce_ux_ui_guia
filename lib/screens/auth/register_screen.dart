@@ -83,7 +83,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Títulos
                 Text(
                   'crea_una_cuenta_para_acceder_a_tu_espaci'.tr(),
                   style: theme.textTheme.displayLarge?.copyWith(
@@ -100,7 +99,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 SizedBox(height: 40),
 
-                // Inputs
                 CustomTextField(
                   controller: _nameController,
                   label: 'nombre_completo'.tr(),
@@ -177,7 +175,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                 SizedBox(height: 24),
 
-                // Divisor
                 Row(
                   children: [
                     Expanded(

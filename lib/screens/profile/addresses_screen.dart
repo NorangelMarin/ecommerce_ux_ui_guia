@@ -53,7 +53,6 @@ class AddressesScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24),
 
-            // Tarjetas de direcciones
             addressesAsync.when(
               loading: () => Center(
                 child: CircularProgressIndicator(
@@ -84,12 +83,10 @@ class AddressesScreen extends ConsumerWidget {
               },
             ),
 
-            // Botón agregar nueva dirección
             _buildAddNewCard(context, ref),
 
             SizedBox(height: 16),
 
-            // Tarjeta de ubicación GPS
             _buildGpsCard(context, ref),
 
             SizedBox(height: 16),
@@ -180,7 +177,6 @@ class AddressesScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Badge + icono lápiz
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -339,7 +335,6 @@ class AddressesScreen extends ConsumerWidget {
               ),
               SizedBox(height: 12),
 
-              // Texto plano de la dirección
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -364,7 +359,6 @@ class AddressesScreen extends ConsumerWidget {
               ),
               SizedBox(height: 20),
 
-              // Botón
               CustomButton(
                 text: 'fijar_ubicacion'.tr(),
                 color: ButtonColor.naranja,

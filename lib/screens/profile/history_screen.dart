@@ -114,7 +114,6 @@ class HistoryScreen extends ConsumerWidget {
                     ],
                   ),
                   SizedBox(height: 12),
-                  // Tarjetas de pedidos
                   ...groupOrdersList.map(
                     (order) => Padding(
                       padding: EdgeInsets.only(bottom: 12),
@@ -174,12 +173,10 @@ class HistoryScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Fila superior: icono + estado
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Icono de bolsa naranja
               Container(
                 width: 40,
                 height: 40,
@@ -193,7 +190,6 @@ class HistoryScreen extends ConsumerWidget {
                   size: 22,
                 ),
               ),
-              // Badge de estado
               GuideWrapper(
                 title: 'visibilidad_del_estado_del_sistema'.tr(),
                 description:
@@ -240,7 +236,6 @@ class HistoryScreen extends ConsumerWidget {
             ),
           ),
           SizedBox(height: 16),
-          // Botón Ver Detalles
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(

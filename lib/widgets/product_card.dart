@@ -366,7 +366,6 @@ class ProductCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen — tap navega al detalle
             GestureDetector(
               onTap: onTap,
               child: ClipRRect(
@@ -412,7 +411,6 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 4),
-                  // Título — tap navega al detalle
                   GestureDetector(
                     onTap: onTap,
                     child: Text(
@@ -472,7 +470,6 @@ class ProductCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  // Pastilla de cantidad [- 1 +]
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(

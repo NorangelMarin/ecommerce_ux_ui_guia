@@ -57,7 +57,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Botón Saltar
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
@@ -120,7 +119,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Paginación y Botones
             Padding(
               padding: EdgeInsets.all(32.0),
               child: Column(

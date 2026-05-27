@@ -81,7 +81,6 @@ class ReceiptScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: 16),
 
-                    // Icono de Éxito
                     GuideWrapper(
                       title: 'retroalimentacion_del_sistema'.tr(),
                       description:
@@ -194,11 +193,9 @@ class ReceiptScreen extends ConsumerWidget {
                             ),
                             SizedBox(height: 32),
 
-                            // Bloque 1: Resumen de pago
                             _buildOrderSummaryBlock(context, targetOrder),
                             SizedBox(height: 24),
 
-                            // Bloque 2: Información de Envío
                             _buildShippingInfoBlock(context, ref, targetOrder),
                             SizedBox(height: 24),
 
@@ -206,7 +203,6 @@ class ReceiptScreen extends ConsumerWidget {
                             _buildPaymentMethodBlock(context, ref, targetOrder),
                             SizedBox(height: 32),
 
-                            // Botones de acción
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16),
                               child: Column(
@@ -527,7 +523,6 @@ class ReceiptScreen extends ConsumerWidget {
     if (order.paymentMethodSnapshot != null) {
       final snap = order.paymentMethodSnapshot!;
       if (snap.containsKey('brand')) {
-        // Es una tarjeta
         targetPm = PaymentMethod.fromMap(snap, pmId);
       } else {
         // Es un método tipo 'pos', 'cash', 'mobile'

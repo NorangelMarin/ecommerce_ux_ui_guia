@@ -73,12 +73,10 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                   CheckoutStepper(currentStep: 3),
                   SizedBox(height: 32),
 
-                  // Bloque 1: Resumen de pago
                   _buildOrderSummaryBlock(context, ref),
 
                   SizedBox(height: 24),
 
-                  // Bloque 2: Información de Envío
                   _buildShippingInfoBlock(context, ref),
 
                   SizedBox(height: 24),
@@ -110,7 +108,6 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
 
                   SizedBox(height: 24),
 
-                  // Botón
                   GuideWrapper(
                     title: 'prevención_de_errores_nielsen'.tr(),
                     description:

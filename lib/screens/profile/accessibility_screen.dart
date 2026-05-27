@@ -63,7 +63,6 @@ class AccessibilityScreen extends ConsumerWidget {
             ),
             SizedBox(height: 32),
 
-            // Tamaño del texto
             _buildCard(context, 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +218,6 @@ class AccessibilityScreen extends ConsumerWidget {
 
             SizedBox(height: 32),
 
-            // Botón Restablecer
             Center(
               child: SizedBox(
                 width: 200,

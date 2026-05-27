@@ -44,7 +44,6 @@ class CartScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // Lista de productos
           Expanded(
             child: cartItems.isEmpty
                 ? Center(
@@ -93,7 +92,6 @@ class CartScreen extends ConsumerWidget {
                   ),
           ),
 
-          // Resumen de la Orden
           if (cartItems.isNotEmpty)
             GuideWrapper(
               title: 'transparencia_de_costos'.tr(),

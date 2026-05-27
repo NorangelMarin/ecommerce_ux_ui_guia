@@ -421,7 +421,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             SizedBox(height: 40),
 
-            // Formulario
             GuideWrapper(
               title: 'prevención_de_errores_y_control'.tr(),
               description:

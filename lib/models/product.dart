@@ -13,7 +13,6 @@ class Product {
   final DateTime? createdAt;
   final String? description;
 
-  // Nuevos campos
   final Map<String, String> specs;      // Especificaciones dinámicas
   final double ratingPromedio;          // Promedio de calificaciones
   final int totalResenas;               // Total de reseñas

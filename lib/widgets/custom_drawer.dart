@@ -28,7 +28,6 @@ class CustomDrawer extends ConsumerWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // Cabecera (Avatar y Perfil)
             SizedBox(height: 32),
             _buildAvatar(context, firebaseUser?.photoURL),
             SizedBox(height: 16),
@@ -95,7 +94,6 @@ class CustomDrawer extends ConsumerWidget {
                   _buildGreenDivider(context),
                   SizedBox(height: 16),
                   
-                  // Footer: Botón Cerrar Sesión y Versión
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: CustomButton(

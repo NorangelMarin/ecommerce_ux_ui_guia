@@ -241,7 +241,6 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
 
                   SizedBox(height: 48),
 
-                  // Botón central reducido
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: CustomButton(

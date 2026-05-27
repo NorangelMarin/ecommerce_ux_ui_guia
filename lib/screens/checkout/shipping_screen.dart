@@ -235,7 +235,6 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                   if ((_selectedAddress ??
                           (addresses.isEmpty ? 'nueva' : null)) ==
                       'nueva') ...[
-                    // Botón para usar ubicación actual
                     GuideWrapper(
                       title: 'automatización_y_prevención_de_errores'.tr(),
                       description:
@@ -346,7 +345,6 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
 
                   SizedBox(height: 48),
 
-                  // Botón Confirmar
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: CustomButton(

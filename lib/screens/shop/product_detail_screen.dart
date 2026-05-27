@@ -75,7 +75,6 @@ class ProductDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen del producto
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Stack(
@@ -114,7 +113,6 @@ class ProductDetailScreen extends ConsumerWidget {
                             ),
                     ),
                   ),
-                  // Botón Zoom
                   Positioned(
                     bottom: 12,
                     right: 12,
@@ -145,7 +143,6 @@ class ProductDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            // Título y precio
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -277,7 +274,6 @@ class ProductDetailScreen extends ConsumerWidget {
 
             SizedBox(height: 24),
 
-            // Botón Añadir al Carrito
             GuideWrapper(
               title: 'llamado_a_la_acción_primario'.tr(),
               description:
@@ -325,7 +321,6 @@ class ProductDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Encabezado de reseñas + botón escribir
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -356,7 +351,6 @@ class ProductDetailScreen extends ConsumerWidget {
                           ],
                         ],
                       ),
-                      // Botón condicional
                       if (hasPurchased && !hasReviewed)
                         TextButton.icon(
                           onPressed: () =>
@@ -412,7 +406,6 @@ class ProductDetailScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 12),
 
-                  // Resumen de rating (del campo ratingPromedio del producto)
                   if (product.totalResenas > 0)
                     Container(
                       padding: EdgeInsets.all(16),
@@ -531,7 +524,6 @@ class ProductDetailScreen extends ConsumerWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Avatar
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: review.userPhotoUrl.isNotEmpty
@@ -736,7 +728,6 @@ class ProductDetailScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              // Botón cerrar
               Positioned(
                 top: 16,
                 right: 16,
@@ -855,7 +846,6 @@ class ProductDetailScreen extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título
                   Row(
                     children: [
                       Icon(
@@ -923,7 +913,6 @@ class ProductDetailScreen extends ConsumerWidget {
                     ),
                   SizedBox(height: 20),
 
-                  // Campo de comentario
                   Text('tu_comentario'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -958,7 +947,6 @@ class ProductDetailScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: 16),
 
-                  // Botón enviar
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(

@@ -368,7 +368,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Título principal (Igual a Catálogo pero para Favoritos)
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
             child: Text(
@@ -433,7 +432,6 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             ),
           ),
 
-          // Fila de Resultados y Filtros
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
