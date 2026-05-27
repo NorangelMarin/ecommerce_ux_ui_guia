@@ -49,5 +49,9 @@
 	<string>This app needs access to location to autofill your shipping address.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location to autofill your shipping address.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Esta aplicación requiere acceso a tus fotos para que puedas seleccionar y actualizar tu imagen de perfil.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Esta aplicación requiere acceso a tu cámara por si deseas tomarte una foto nueva para tu perfil.</string>
 </dict>
 </plist>
