@@ -38,11 +38,6 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accessState = ref.watch(accessibilityProvider);
 
-    // El tema ahora se inyecta directamente a través de AppTheme.getTheme
-
-    // Mapeo de textScale de Slider (0 a 1) a textScaleFactor (0.85 a 1.15)
-    // 0.5 -> 1.0 (Normal)
-    // Rango ajustado para evitar errores de Overflow en el diseño
     final double textScaleFactor = 0.85 + (accessState.textScale * 0.3);
 
     return MaterialApp.router(
