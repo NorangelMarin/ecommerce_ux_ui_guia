@@ -482,22 +482,41 @@ class OrderStatusScreen extends ConsumerWidget {
             Expanded(
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        image: DecorationImage(
-                          image: AssetImage(
-                            'assets/images/delivery_map_clean.png',
+                  // Obtenemos el brillo actual para decidir el estilo del mapa
+                  Builder(builder: (context) {
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
+                    
+                    // Matriz para invertir colores (Modo Oscuro)
+                    const colorMatrixDark = <double>[
+                      -1,  0,  0, 0, 255, // Red
+                       0, -1,  0, 0, 255, // Green
+                       0,  0, -1, 0, 255, // Blue
+                       0,  0,  0, 1,   0, // Alpha
+                    ];
+                    
+                    return ColorFiltered(
+                      colorFilter: isDark 
+                          ? const ColorFilter.matrix(colorMatrixDark)
+                          // Modo monocromático (Escala de grises) para el tema claro
+                          : const ColorFilter.mode(Colors.grey, BlendMode.saturation),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.black : Colors.grey[200],
+                            image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/delivery_map_clean.png',
+                              ),
+                              fit: BoxFit.cover,
+                              opacity: 0.8,
+                            ),
                           ),
-                          fit: BoxFit.cover,
-                          opacity: 0.8,
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                   // Marcador del repartidor animado (simulado)
                   Center(
                     child: TweenAnimationBuilder(
@@ -565,7 +584,10 @@ class OrderStatusScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'carlos_repartidor'.tr(),
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.of(context).textoPrincipal,
+                            ),
                           ),
                           Text(
                             'en_camino__honda_cargo'.tr(),
