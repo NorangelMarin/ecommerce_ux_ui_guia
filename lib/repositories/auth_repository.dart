@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,15 +45,39 @@ class AuthRepository {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuario no autenticado');
 
-    final ref = FirebaseStorage.instance.ref().child('profile_images').child('${user.uid}.jpg');
-    final uploadTask = ref.putData(imageBytes, SettableMetadata(contentType: 'image/jpeg'));
-    final snapshot = await uploadTask;
-    final url = await snapshot.ref.getDownloadURL();
+    // Convert image to Base64 and construct data URL
+    final base64String = base64Encode(imageBytes);
+    final url = 'data:image/jpeg;base64,$base64String';
 
-    await user.updatePhotoURL(url);
     await _firestore.collection('users').doc(user.uid).set({
       'photoUrl': url,
     }, SetOptions(merge: true));
+  }
+
+  String _handleAuthException(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'El correo electrónico no es válido.';
+      case 'user-disabled':
+        return 'El usuario ha sido deshabilitado.';
+      case 'user-not-found':
+        return 'No se encontró un usuario con este correo.';
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+      case 'email-already-in-use':
+        return 'El correo ya está en uso por otra cuenta.';
+      case 'operation-not-allowed':
+        return 'Operación no permitida.';
+      case 'weak-password':
+        return 'La contraseña es demasiado débil.';
+      case 'network-request-failed':
+        return 'Error de conexión. Verifica tu internet.';
+      case 'too-many-requests':
+        return 'Demasiados intentos fallidos. Intenta de nuevo más tarde.';
+      default:
+        return 'Ocurrió un error inesperado. Intenta nuevamente.';
+    }
   }
 
   Future<void> changePassword(String currentPassword, String newPassword) async {
@@ -65,10 +90,10 @@ class AuthRepository {
       await user.reauthenticateWithCredential(cred);
       await user.updatePassword(newPassword);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
         throw 'La contraseña actual es incorrecta.';
       }
-      throw e.message ?? 'Ocurrió un error al cambiar la contraseña';
+      throw _handleAuthException(e);
     }
   }
 
@@ -77,7 +102,11 @@ class AuthRepository {
     if (user == null) throw Exception('Usuario no autenticado');
     if (user.email == null) throw Exception('Usuario sin correo electrónico');
     
-    await _auth.sendPasswordResetEmail(email: user.email!);
+    try {
+      await _auth.sendPasswordResetEmail(email: user.email!);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    }
   }
 
   Future<UserCredential?> signInWithEmail(String email, String password) async {
@@ -87,7 +116,7 @@ class AuthRepository {
         password: password
       );
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? 'Ocurrió un error en la autenticación';
+      throw _handleAuthException(e);
     } catch (e) {
       throw 'Error desconocido: $e';
     }
@@ -107,7 +136,7 @@ class AuthRepository {
       }
       return credential;
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? 'Ocurrió un error al registrar el usuario';
+      throw _handleAuthException(e);
     } catch (e) {
       throw 'Error desconocido: $e';
     }
@@ -128,7 +157,7 @@ class AuthRepository {
       }
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? 'Error en la autenticación con Google';
+      throw _handleAuthException(e);
     } catch (e) {
       throw 'Error desconocido: $e';
     }

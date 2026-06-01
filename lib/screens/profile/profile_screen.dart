@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../widgets/top_navigation_bar.dart';
 import '../../widgets/bottom_navigation_bar.dart';
@@ -23,6 +25,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
+  String _selectedPrefix = '0414';
+  final List<String> _phonePrefixes = ['0412', '0414', '0416', '0424', '0426', '0212'];
+
   bool _isEditing = false;
   bool _isSaving = false;
   bool _isUploadingImage = false;
@@ -39,7 +44,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70,
+      imageQuality: 20, // Reduced quality to keep Base64 string small
     );
 
     if (pickedFile != null) {
@@ -73,6 +78,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
+    final phoneDigits = _phoneController.text.trim();
+    if (phoneDigits.length != 7) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('el_nmero_de_telfono_debe_tener_7'.tr()),
+          backgroundColor: AppColors.of(context).error,
+        ),
+      );
+      return;
+    }
+    
+    final fullPhone = '$_selectedPrefix$phoneDigits';
+
     setState(() {
       _isSaving = true;
     });
@@ -81,7 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           .read(authRepositoryProvider)
           .updateProfileData(
             _nameController.text.trim(),
-            _phoneController.text.trim(),
+            fullPhone,
           );
       if (mounted) {
         setState(() {
@@ -305,7 +323,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // Initialize controllers once data is loaded
     if (!_controllersInitialized && (userData != null || user != null)) {
       _nameController.text = displayName;
-      _phoneController.text = phoneNumber;
+      
+      String phone = phoneNumber;
+      phone = phone.replaceAll(RegExp(r'\D'), ''); // Remove all non-digits (like +, -, spaces)
+      if (phone.startsWith('58')) {
+        phone = '0${phone.substring(2)}'; // Convert 58414... to 0414...
+      }
+      
+      if (phone.length >= 11) {
+        String prefix = phone.substring(0, 4);
+        if (_phonePrefixes.contains(prefix)) {
+          _selectedPrefix = prefix;
+          phone = phone.substring(4);
+        }
+      }
+      _phoneController.text = phone;
       _controllersInitialized = true;
     }
 
@@ -365,7 +397,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 ),
                               )
                             : photoUrl != null
-                            ? Image.network(photoUrl, fit: BoxFit.cover)
+                            ? (photoUrl.startsWith('data:image')
+                                ? Image.memory(
+                                    base64Decode(photoUrl.split(',').last),
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(photoUrl, fit: BoxFit.cover))
                             : Container(
                                 color: AppColors.of(context).fondoTarjetas,
                                 child: Icon(
@@ -466,15 +503,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     enabled: false,
                   ),
                   SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'número_telefónico'.tr(),
-                    placeholder: 'Añadir número (obligatorio para comprar)',
-                    controller: _phoneController,
-                    fillColor: _isEditing
-                        ? AppColors.of(context).blanco
-                        : AppColors.of(context).fondoTarjetas,
-                    enabled: _isEditing,
-                    keyboardType: TextInputType.phone,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: _buildPrefixSelector(),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        flex: 7,
+                        child: CustomTextField(
+                          label: 'número_telefónico'.tr(),
+                          placeholder: '1234567',
+                          controller: _phoneController,
+                          fillColor: _isEditing
+                              ? AppColors.of(context).blanco
+                              : AppColors.of(context).fondoTarjetas,
+                          enabled: _isEditing,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(7),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
 
                   if (_isEditing) ...[
@@ -589,18 +643,72 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                color: AppColors.of(context).textoPrincipal,
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppColors.of(context).textoPrincipal,
+                ),
               ),
             ),
             Icon(Icons.chevron_right, color: AppColors.of(context).naranjaUnimet),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPrefixSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'código'.tr(),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.of(context).textoPrincipal,
+          ),
+        ),
+        SizedBox(height: 8),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          height: 48, // Ajustar altura para igualar CustomTextField
+          decoration: BoxDecoration(
+            color: _isEditing ? AppColors.of(context).blanco : AppColors.of(context).fondoTarjetas,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppColors.of(context).sombras.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Center(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedPrefix,
+                isExpanded: true,
+                icon: Icon(Icons.keyboard_arrow_down, color: AppColors.of(context).sombras),
+                onChanged: _isEditing
+                    ? (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPrefix = newValue;
+                          });
+                        }
+                      }
+                    : null,
+                items: _phonePrefixes.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value, style: TextStyle(fontSize: 14)),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

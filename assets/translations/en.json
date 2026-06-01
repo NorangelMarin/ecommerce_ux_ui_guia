@@ -342,5 +342,6 @@
   "cantidad": "Quantity:",
   "precio_total": "Total price:",
   "seleccione_una_dirección": "Select an address",
-  "orden": "Order:"
+  "orden": "Order:",
+  "categorias_destacadas": "Featured Categories"
 }

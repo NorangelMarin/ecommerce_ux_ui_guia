@@ -1,3 +1,6 @@
+// Copyright (c) 2026 Norangel Marín. All rights reserved.
+// Este software y su código fuente son propiedad exclusiva de Norangel Marín.
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

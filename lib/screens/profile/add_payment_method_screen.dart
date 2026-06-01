@@ -179,7 +179,7 @@ class _AddPaymentMethodScreenState
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(4),
+                            LengthLimitingTextInputFormatter(3),
                           ],
                         ),
                       ),

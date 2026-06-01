@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,11 @@ class CustomDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final firebaseUser = ref.watch(authStateProvider).value;
+    final userData = ref.watch(userDataProvider).value;
+    
+    final photoUrl = userData?['photoUrl']?.isNotEmpty == true
+        ? userData!['photoUrl']
+        : firebaseUser?.photoURL;
     
     // Obtener la ruta actual dinámicamente de GoRouter
     final currentRoute = GoRouterState.of(context).uri.toString();
@@ -29,10 +35,12 @@ class CustomDrawer extends ConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: 32),
-            _buildAvatar(context, firebaseUser?.photoURL),
+            _buildAvatar(context, photoUrl),
             SizedBox(height: 16),
             Text(
-              firebaseUser?.displayName ?? 'Usuario',
+              userData?['displayName']?.isNotEmpty == true
+                  ? userData!['displayName']
+                  : firebaseUser?.displayName ?? 'Usuario',
               style: theme.textTheme.displayMedium?.copyWith(
                 color: AppColors.of(context).textoPrincipal,
                 fontSize: 24,
@@ -100,9 +108,17 @@ class CustomDrawer extends ConsumerWidget {
                       text: 'cerrar_sesin'.tr(),
                       color: ButtonColor.naranja,
                       onPressed: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => Center(
+                            child: CircularProgressIndicator(color: AppColors.of(context).naranjaUnimet),
+                          ),
+                        );
                         await ref.read(authRepositoryProvider).signOut();
                         if (context.mounted) {
-                          context.pop();
+                          Navigator.of(context).pop(); // Cierra el dialog
+                          context.pop(); // Cierra el drawer
                           context.go('/');
                         }
                       },
@@ -115,6 +131,15 @@ class CustomDrawer extends ConsumerWidget {
                         color: AppColors.of(context).sombras,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Center(
+                    child: Text('© 2026 Creado por Norangel Marín',
+                      style: TextStyle(
+                        color: AppColors.of(context).sombras,
+                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -147,10 +172,15 @@ class CustomDrawer extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16), // ligeramente menor para no superponer el borde
         child: photoUrl != null
-            ? Image.network(
-                photoUrl,
-                fit: BoxFit.cover,
-              )
+            ? (photoUrl.startsWith('data:image')
+                ? Image.memory(
+                    base64Decode(photoUrl.split(',').last),
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    photoUrl,
+                    fit: BoxFit.cover,
+                  ))
             : Icon(Icons.person, size: 80, color: AppColors.of(context).sombras), // Placeholder de foto
       ),
     );

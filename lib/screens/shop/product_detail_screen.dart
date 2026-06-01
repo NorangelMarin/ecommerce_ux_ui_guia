@@ -11,6 +11,7 @@ import '../../providers/cart_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import '../../providers/review_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/category_provider.dart';
 import '../../models/cart_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -28,6 +29,16 @@ class ProductDetailScreen extends ConsumerWidget {
     final hasReviewed =
         ref.watch(hasReviewedProvider(productId)).value ?? false;
     final currentUser = ref.watch(authStateProvider).value;
+    final categoriesAsync = ref.watch(categoriesProvider);
+    final categories = categoriesAsync.value ?? [];
+
+    String getCategoryName(String categoryId) {
+      try {
+        return categories.firstWhere((c) => c.id == categoryId).name;
+      } catch (e) {
+        return categoryId;
+      }
+    }
 
     // Buscar el producto. Si aún no carga, mostramos un loader.
     if (productsAsync.isLoading) {
@@ -223,57 +234,6 @@ class ProductDetailScreen extends ConsumerWidget {
 
             SizedBox(height: 24),
 
-            // Especificaciones Técnicas
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: AppColors.of(context).fondoTarjetas,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('especificaciones_tcnicas'.tr(),
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: AppColors.of(context).textoPrincipal,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    if (product.specs.isNotEmpty) ...[
-                      ...product.specs.entries.toList().asMap().entries.map((
-                        entry,
-                      ) {
-                        final isLast = entry.key == product.specs.length - 1;
-                        return _buildSpecRow(context, 
-                          entry.value.key,
-                          entry.value.value,
-                          isLast: isLast,
-                        );
-                      }),
-                    ] else ...[
-                      _buildSpecRow(context, 'Categoría principal', product.category),
-                      if (product.categories.length > 1)
-                        _buildSpecRow(context, 
-                          'Otras categorías',
-                          product.categories.skip(1).join(', '),
-                        ),
-                      _buildSpecRow(context, 
-                        'ID de referencia',
-                        product.id,
-                        isLast: true,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: 24),
-
             GuideWrapper(
               title: 'llamado_a_la_acción_primario'.tr(),
               description:
@@ -313,7 +273,56 @@ class ProductDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: 32),
+            SizedBox(height: 24),
+
+            // Especificaciones Técnicas
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: AppColors.of(context).fondoTarjetas,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('especificaciones_tcnicas'.tr(),
+                      style: theme.textTheme.displayMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppColors.of(context).textoPrincipal,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    if (product.specs.isNotEmpty) ...[
+                      ...product.specs.entries.toList().asMap().entries.map((
+                        entry,
+                      ) {
+                        final isLast = entry.key == product.specs.length - 1;
+                        return _buildSpecRow(context, 
+                          entry.value.key,
+                          entry.value.value,
+                          isLast: isLast,
+                        );
+                      }),
+                    ] else ...[
+                      _buildSpecRow(context, 'Categoría principal', getCategoryName(product.category)),
+                      if (product.categories.length > 1)
+                        _buildSpecRow(context, 
+                          'Otras categorías',
+                          product.categories.skip(1).map(getCategoryName).join(', '),
+                        ),
+                      _buildSpecRow(context, 
+                        'ID de referencia',
+                        product.id,
+                        isLast: true,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
 
             // Reseñas
             Padding(
@@ -642,6 +651,7 @@ class ProductDetailScreen extends ConsumerWidget {
       padding: EdgeInsets.only(bottom: isLast ? 0 : 12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             key,
@@ -651,9 +661,13 @@ class ProductDetailScreen extends ConsumerWidget {
               color: AppColors.of(context).textoPrincipal,
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 13, color: AppColors.of(context).sombras),
+          SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 13, color: AppColors.of(context).sombras),
+            ),
           ),
         ],
       ),

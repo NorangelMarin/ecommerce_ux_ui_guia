@@ -618,7 +618,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(4),
+                  LengthLimitingTextInputFormatter(3),
                 ],
               ),
             ),
@@ -651,12 +651,14 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
               ),
             ),
             SizedBox(width: 12),
-            GestureDetector(
-              onTap: () => setState(() => _saveMethod = !_saveMethod),
-              child: Text('guardar_para_mis_futuros_pagos'.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.of(context).sombras,
-                  fontSize: 13,
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _saveMethod = !_saveMethod),
+                child: Text('guardar_para_mis_futuros_pagos'.tr(),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.of(context).sombras,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),

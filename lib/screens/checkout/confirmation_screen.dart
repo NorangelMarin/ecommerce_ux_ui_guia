@@ -417,12 +417,19 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
             child: SizedBox(
               width: 48,
               height: 48,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[200]),
-              ),
+              child: imageUrl.startsWith('assets/')
+                  ? Image.asset(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(color: Colors.grey[200]),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Container(color: Colors.grey[200]),
+                    ),
             ),
           ),
           SizedBox(width: 12),

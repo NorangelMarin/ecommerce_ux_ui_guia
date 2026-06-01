@@ -122,6 +122,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
+            // Título de Categorías Destacadas
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text('categorias_destacadas'.tr(),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.of(context).textoPrincipal,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+
             // Bento Grid Categorías
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
