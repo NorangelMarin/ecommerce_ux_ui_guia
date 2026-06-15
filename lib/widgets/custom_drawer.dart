@@ -55,24 +55,26 @@ class CustomDrawer extends ConsumerWidget {
               ),
             ),
             SizedBox(height: 12),
-            GestureDetector(
-              onTap: () {
+            OutlinedButton.icon(
+              onPressed: () {
                 context.pop();
                 context.push('/profile');
               },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('editar_perfil'.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.of(context).azulSistemas,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                  SizedBox(width: 4),
-                  Icon(Icons.chevron_right, size: 16, color: AppColors.of(context).azulSistemas),
-                ],
+              icon: Icon(Icons.edit_outlined, size: 16, color: AppColors.of(context).azulSistemas),
+              label: Text('editar_perfil'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.of(context).azulSistemas,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppColors.of(context).azulSistemas),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                minimumSize: Size(0, 32),
               ),
             ),
             SizedBox(height: 16),
@@ -222,7 +224,11 @@ class CustomDrawer extends ConsumerWidget {
           context.pop(); // Cierra el drawer
           // Si ya estamos en la ruta, no hacemos push
           if (!isActive) {
-            context.push(route);
+            if (route == '/home') {
+              context.go('/home');
+            } else {
+              context.push(route);
+            }
           }
         },
       ),

@@ -17,6 +17,7 @@ import '../../providers/cart_provider.dart';
 import 'payment_method_screen.dart' show CheckoutData;
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class ConfirmationScreen extends ConsumerStatefulWidget {
   final CheckoutData? checkoutData;
@@ -183,15 +184,8 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
 
                                 if (resolvedAddress == null ||
                                     (resolvedPm == null && !isNonCard)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
-                                            .tr(),
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
+                                            .tr(), type: NotificationType.error);
                                   return;
                                 }
 
@@ -241,15 +235,12 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                                     if (!context.mounted) return;
                                     context.pushReplacement(
                                       '/receipt/$orderId',
+                                      extra: true,
                                     );
                                   }
                                 } catch (e) {
                                   if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error al procesar: $e'),
-                                      ),
-                                    );
+                                  CustomNotification.show(context, message: 'Error al procesar: $e', type: NotificationType.error);
                                 } finally {
                                   if (mounted) {
                                     setState(() => _isProcessing = false);

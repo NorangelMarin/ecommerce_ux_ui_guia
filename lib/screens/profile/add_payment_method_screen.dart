@@ -11,6 +11,7 @@ import '../../providers/auth_provider.dart';
 import '../../models/payment_method.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../checkout/payment_method_screen.dart'; // Import formatters
+import '../../widgets/custom_notification.dart';
 
 class AddPaymentMethodScreen extends ConsumerStatefulWidget {
   const AddPaymentMethodScreen({super.key});
@@ -49,9 +50,7 @@ class _AddPaymentMethodScreenState
         cvc.length < 3 ||
         alias.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('por_favor_completa_todos_los'.tr())),
-        );
+        CustomNotification.show(context, message: 'por_favor_completa_todos_los'.tr(), type: NotificationType.info);
       }
       return;
     }
@@ -81,9 +80,7 @@ class _AddPaymentMethodScreenState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error_al_guardar'.tr(args: [e.toString()]))),
-        );
+        CustomNotification.show(context, message: 'error_al_guardar'.tr(args: [e.toString()]), type: NotificationType.error);
       }
     } finally {
       if (mounted) {

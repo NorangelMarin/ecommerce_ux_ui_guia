@@ -8,6 +8,7 @@ import '../../theme/app_colors.dart';
 import '../../widgets/floating_chat_button.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -145,7 +146,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('no_se_pudo_abrir_whatsapp'.tr())));
+                          CustomNotification.show(context, message: 'no_se_pudo_abrir_whatsapp'.tr(), type: NotificationType.info);
                         }
                       }
                     },
@@ -165,7 +166,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('no_se_pudo_abrir_la'.tr())));
+                          CustomNotification.show(context, message: 'no_se_pudo_abrir_la'.tr(), type: NotificationType.info);
                         }
                       }
                     },

@@ -16,6 +16,7 @@ import '../../models/category.dart';
 import '../../providers/accessibility_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class WishlistScreen extends ConsumerStatefulWidget {
   const WishlistScreen({super.key});
@@ -73,24 +74,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           },
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('escuchando_di_el_nombre_del'.tr()),
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'escuchando_di_el_nombre_del'.tr(), type: NotificationType.info);
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('reconocimiento_de_voz_no_disponible_o_pe'.tr()),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'reconocimiento_de_voz_no_disponible_o_pe'.tr(), type: NotificationType.info);
         }
       }
     } else {
@@ -569,15 +557,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                                       : 0.0,
                                 ),
                               );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${product.title}${'anadido_al_carrito'.tr()}',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: AppColors.of(context).azulSistemas,
-                            ),
-                          );
+                          CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),

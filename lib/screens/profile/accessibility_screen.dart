@@ -8,6 +8,8 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_button.dart';
 import '../../theme/app_colors.dart';
 import '../../providers/accessibility_provider.dart';
+import '../../providers/auth_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AccessibilityScreen extends ConsumerWidget {
   AccessibilityScreen({super.key});
@@ -188,7 +190,7 @@ class AccessibilityScreen extends ConsumerWidget {
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
-                        value: accessState.language,
+                        value: context.locale.languageCode == 'es' ? 'Español' : 'English',
                         isExpanded: true,
                         icon: Icon(Icons.keyboard_arrow_down, color: AppColors.of(context).sombras, size: 20),
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -202,10 +204,15 @@ class AccessibilityScreen extends ConsumerWidget {
                         onChanged: (val) {
                           if (val != null) {
                             accessNotifier.setLanguage(val);
-                            if (val == 'Español') {
-                              context.setLocale(const Locale('es'));
-                            } else if (val == 'English') {
-                              context.setLocale(const Locale('en'));
+                            final code = val == 'Español' ? 'es' : 'en';
+                            context.setLocale(Locale(code));
+                            
+                            final user = ref.read(authStateProvider).value;
+                            if (user != null) {
+                              FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+                                {'language': code}, 
+                                SetOptions(merge: true)
+                              );
                             }
                           }
                         },
@@ -228,6 +235,14 @@ class AccessibilityScreen extends ConsumerWidget {
                   icon: Icons.refresh,
                   onPressed: () {
                     accessNotifier.reset();
+                    context.setLocale(const Locale('es'));
+                    final user = ref.read(authStateProvider).value;
+                    if (user != null) {
+                      FirebaseFirestore.instance.collection('users').doc(user.uid).set(
+                        {'language': 'es'}, 
+                        SetOptions(merge: true)
+                      );
+                    }
                   },
                 ),
               ),

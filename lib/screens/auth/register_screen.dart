@@ -6,6 +6,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -46,9 +47,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         if (mounted) context.go('/home');
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-          );
+          CustomNotification.show(context, message: e.toString(), type: NotificationType.error);
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);

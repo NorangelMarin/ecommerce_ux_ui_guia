@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_colors.dart';
 import 'guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'custom_notification.dart';
 
 class FloatingChatButton extends StatefulWidget {
   const FloatingChatButton({super.key});
@@ -192,9 +193,7 @@ class _SupportBottomSheet extends StatelessWidget {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('no_se_pudo_abrir_whatsapp'.tr())),
-                  );
+                  CustomNotification.show(context, message: 'no_se_pudo_abrir_whatsapp'.tr(), type: NotificationType.info);
                 }
               }
             },
@@ -239,12 +238,7 @@ class _SupportBottomSheet extends StatelessWidget {
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('no_se_pudo_abrir_la_aplicacin_de_llamada'.tr(),
-                      ),
-                    ),
-                  );
+                  CustomNotification.show(context, message: 'no_se_pudo_abrir_la_aplicacin_de_llamada'.tr(), type: NotificationType.info);
                 }
               }
             },

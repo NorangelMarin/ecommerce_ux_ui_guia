@@ -122,6 +122,7 @@ class CustomDropdownField<T> extends StatelessWidget {
         SizedBox(height: 8),
         DropdownButtonFormField<T>(
           initialValue: value,
+          isExpanded: true,
           items: items,
           onChanged: onChanged,
           icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey),

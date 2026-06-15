@@ -13,6 +13,7 @@ import '../../providers/auth_provider.dart';
 import '../../models/address.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class AddressesScreen extends ConsumerWidget {
   const AddressesScreen({super.key});
@@ -439,9 +440,7 @@ class AddressesScreen extends ConsumerWidget {
     } catch (e) {
       if (!context.mounted) return;
       Navigator.pop(context); // Cerrar loading
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('error_general'.tr(args: [e.toString()]))),
-      );
+      CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
     }
   }
 
@@ -528,11 +527,7 @@ class AddressesScreen extends ConsumerWidget {
                 }
                 if (ctx.mounted) {
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('dirección_guardada_correctamente'.tr()),
-                    ),
-                  );
+                  CustomNotification.show(context, message: 'dirección_guardada_correctamente'.tr(), type: NotificationType.info);
                 }
               },
               child: Text('guardar'.tr()),
