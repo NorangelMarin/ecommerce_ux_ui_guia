@@ -17,7 +17,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 class ReceiptScreen extends ConsumerWidget {
   final String? orderId;
-  const ReceiptScreen({super.key, this.orderId});
+  final bool fromCheckout;
+  const ReceiptScreen({super.key, this.orderId, this.fromCheckout = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,10 +28,10 @@ class ReceiptScreen extends ConsumerWidget {
     // Utilizamos PopScope para interceptar el botón "Atrás" de Android
     // y redirigir al usuario al inicio, dado que el carrito ya está vacío.
     return PopScope(
-      canPop: false,
+      canPop: !fromCheckout,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        context.go('/home');
+        if (fromCheckout) context.go('/home');
       },
       child: Scaffold(
         backgroundColor: AppColors.of(context).fondoPrincipal,
@@ -389,12 +390,17 @@ class ReceiptScreen extends ConsumerWidget {
             child: SizedBox(
               width: 48,
               height: 48,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[200]),
-              ),
+              child: imageUrl.startsWith('assets/')
+                  ? Image.asset(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200]),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200]),
+                    ),
             ),
           ),
           SizedBox(width: 12),

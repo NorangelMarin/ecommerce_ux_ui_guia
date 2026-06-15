@@ -105,7 +105,7 @@
   "productos": "Products...",
   "filtros_y_ordenamiento_control_del": "Filters and Sorting (User Control)",
   "ofertas_especiales_aversión_a_la": "Special Offers (Loss Aversion)",
-  "productos_destacados": "Featured Products",
+  "productos_destacados": "Featured products",
   "bento_grid_de_categorías": "Categories Bento Grid",
   "ecommerce_uxui_guía": "E-commerce UX/UI Guide",
   "producto_no_encontrado": "Product not found",
@@ -343,5 +343,5 @@
   "precio_total": "Total price:",
   "seleccione_una_dirección": "Select an address",
   "orden": "Order:",
-  "categorias_destacadas": "Featured Categories"
+  "categorias_destacadas": "Most Searched Categories"
 }

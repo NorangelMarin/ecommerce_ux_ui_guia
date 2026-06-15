@@ -14,6 +14,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../models/cart_item.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
   final String productId;
@@ -261,13 +262,7 @@ class ProductDetailScreen extends ConsumerWidget {
                                 : 0.0,
                           ),
                         );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('anadido_al_carrito'.tr(args: [product.title])),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: AppColors.of(context).azulSistemas,
-                      ),
-                    );
+                    CustomNotification.show(context, message: 'anadido_al_carrito'.tr(args: [product.title]), type: NotificationType.success);
                   },
                 ),
               ),
@@ -975,23 +970,11 @@ class ProductDetailScreen extends ConsumerWidget {
                           ? null
                           : () async {
                               if (selectedRating == 0) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('por_favor_selecciona_una_calificacin'.tr(),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
+                                CustomNotification.show(context, message: 'por_favor_selecciona_una_calificacin'.tr(), type: NotificationType.info);
                                 return;
                               }
                               if (commentController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('por_favor_escribe_un_comentario'.tr(),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
+                                CustomNotification.show(context, message: 'por_favor_escribe_un_comentario'.tr(), type: NotificationType.info);
                                 return;
                               }
                               setSheetState(() => isSubmitting = true);
@@ -1009,25 +992,12 @@ class ProductDetailScreen extends ConsumerWidget {
                                 );
                                 if (ctx.mounted) Navigator.of(ctx).pop();
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('resea_publicada_gracias_por_tu_opinin'.tr(),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: AppColors.of(context).verdeSaman,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'resea_publicada_gracias_por_tu_opinin'.tr(), type: NotificationType.success);
                                 }
                               } catch (e) {
                                 setSheetState(() => isSubmitting = false);
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error al publicar: $e'),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'Error al publicar: $e', type: NotificationType.error);
                                 }
                               }
                             },

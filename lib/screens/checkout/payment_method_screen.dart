@@ -14,6 +14,7 @@ import '../../models/payment_method.dart';
 import 'shipping_screen.dart' show CheckoutAddressData;
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 /// Contenedor con los datos del método de pago seleccionado en el flujo.
 class CheckoutPaymentData {
@@ -129,7 +130,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
       backgroundColor: AppColors.of(context).fondoPrincipal,
       drawer: CustomDrawer(),
       appBar: TopNavigationBar(
-        titleWidget: Text('selecciona_el_medio_de_pago'.tr(),
+        titleWidget: Text(
+          'selecciona_el_medio_de_pago'.tr(),
           style: theme.textTheme.displayMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -157,17 +159,15 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 32.0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CheckoutStepper(currentStep: 2),
                   SizedBox(height: 32),
 
-                  Text('selecciona_el_medio_de_pago'.tr(),
+                  Text(
+                    'selecciona_el_medio_de_pago'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -175,7 +175,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                     ),
                   ),
                   SizedBox(height: 12),
-                  Text('elige_la_opcin_que_mejor_se_adapte_a_tu'.tr(),
+                  Text(
+                    'elige_la_opcin_que_mejor_se_adapte_a_tu'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.of(context).sombras,
                       height: 1.4,
@@ -229,7 +230,7 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                         _buildPaymentCard(
                           index: 4,
                           icon: Icons.account_balance,
-                          title: 'pago_móvil'.tr(),
+                          title: 'pago_movil'.tr(),
                           subtitle: 'seleccione_para_vizualizar_los_datos'.tr(),
                           expandedContent: _buildPagoMovilForm(),
                         ),
@@ -244,42 +245,50 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: CustomButton(
-                      text: _isSaving ? 'procesando'.tr() : 'confirmar_pedido'.tr(),
-                        color: ButtonColor.naranja,
-                        icon: Icons.chevron_right,
-                        onPressed: _isSaving
-                            ? null
-                            : () async {
-                                if (_selectedMethod == 0 &&
-                                    _selectedSavedMethodId == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('por_favor_selecciona_una_tarjeta_guardad'.tr(),
-                                      ),
-                                    ),
+                      text: _isSaving
+                          ? 'procesando'.tr()
+                          : 'confirmar_pedido'.tr(),
+                      color: ButtonColor.naranja,
+                      icon: Icons.chevron_right,
+                      onPressed: _isSaving
+                          ? null
+                          : () async {
+                              if (_selectedMethod == 0 &&
+                                  _selectedSavedMethodId == null) {
+                                CustomNotification.show(
+                                  context,
+                                  message:
+                                      'por_favor_selecciona_una_tarjeta_guardad'
+                                          .tr(),
+                                  type: NotificationType.info,
+                                );
+                                return;
+                              }
+
+                              if (_selectedMethod == 1) {
+                                if (_cardNumberController.text.trim().length <
+                                        15 ||
+                                    _expiryDateController.text.trim().length <
+                                        5 ||
+                                    _cvcController.text.trim().length < 3) {
+                                  CustomNotification.show(
+                                    context,
+                                    message:
+                                        'por_favor_completa_todos_los_datos_de_la'
+                                            .tr(),
+                                    type: NotificationType.error,
                                   );
                                   return;
                                 }
 
-                                if (_selectedMethod == 1) {
-                                  if (_cardNumberController.text.trim().length < 15 ||
-                                      _expiryDateController.text.trim().length < 5 ||
-                                      _cvcController.text.trim().length < 3) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('por_favor_completa_todos_los_datos_de_la'.tr(),
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  String brand = 'VISA';
-                                  if (_cardNumberController.text.startsWith('5')) brand = 'MASTERCARD';
-                                  if (_cardNumberController.text.startsWith('3')) brand = 'AMEX';
-                                  String last4 = _cardNumberController.text.length >= 4
-                                      ? _cardNumberController.text
+                                String brand = 'VISA';
+                                if (_cardNumberController.text.startsWith('5'))
+                                  brand = 'MASTERCARD';
+                                if (_cardNumberController.text.startsWith('3'))
+                                  brand = 'AMEX';
+                                String last4 =
+                                    _cardNumberController.text.length >= 4
+                                    ? _cardNumberController.text
                                           .replaceAll(' ', '')
                                           .substring(
                                             _cardNumberController.text
@@ -287,122 +296,128 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                                                     .length -
                                                 4,
                                           )
-                                      : '';
+                                    : '';
 
-                                  final tempCard = PaymentMethod(
-                                    id: '',
-                                    brand: brand,
-                                    last4Digits: last4,
-                                    expiryDate: _expiryDateController.text,
-                                    labelColor: 'blue',
-                                    isDefault: false,
-                                  );
+                                final tempCard = PaymentMethod(
+                                  id: '',
+                                  brand: brand,
+                                  last4Digits: last4,
+                                  expiryDate: _expiryDateController.text,
+                                  labelColor: 'blue',
+                                  isDefault: false,
+                                );
 
-                                  if (_saveMethod) {
-                                    if (_aliasController.text.trim().isEmpty) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('por_favor_ingresa_un_alias'.tr()),
-                                          backgroundColor: AppColors.of(context).error,
-                                        ),
-                                      );
-                                      return;
-                                    }
-                                    setState(() => _isSaving = true);
-                                    final user = ref.read(authStateProvider).value;
-                                    if (user != null) {
-                                      final cardToSave = PaymentMethod(
-                                        id: '',
-                                        brand: brand,
-                                        last4Digits: last4,
-                                        expiryDate: _expiryDateController.text,
-                                        labelColor: 'blue',
-                                        isDefault: false,
-                                        alias: _aliasController.text.trim(),
-                                      );
-                                      await ref
-                                          .read(paymentMethodRepositoryProvider)
-                                          .addPaymentMethod(user.uid, cardToSave);
-                                    }
-                                    if (mounted) setState(() => _isSaving = false);
-                                  }
-
-                                  if (mounted) {
-                                    context.push(
-                                      '/confirmation',
-                                      extra: CheckoutData(
-                                        addressData: widget.addressData ??
-                                            CheckoutAddressData(),
-                                        paymentData: CheckoutPaymentData(
-                                          newMethod: tempCard,
-                                          methodType: 'card',
-                                        ),
-                                      ),
+                                if (_saveMethod) {
+                                  if (_aliasController.text.trim().isEmpty) {
+                                    CustomNotification.show(
+                                      context,
+                                      message: 'por_favor_ingresa_un_alias'
+                                          .tr(),
+                                      type: NotificationType.info,
                                     );
+                                    return;
                                   }
-                                  return;
-                                }
-
-                                // Método guardado
-                                if (_selectedMethod == 0) {
-                                  if (mounted) {
-                                    context.push(
-                                      '/confirmation',
-                                      extra: CheckoutData(
-                                        addressData: widget.addressData ??
-                                            CheckoutAddressData(),
-                                        paymentData: CheckoutPaymentData(
-                                          savedMethodId: _selectedSavedMethodId,
-                                          methodType: 'saved',
-                                        ),
-                                      ),
+                                  setState(() => _isSaving = true);
+                                  final user = ref
+                                      .read(authStateProvider)
+                                      .value;
+                                  if (user != null) {
+                                    final cardToSave = PaymentMethod(
+                                      id: '',
+                                      brand: brand,
+                                      last4Digits: last4,
+                                      expiryDate: _expiryDateController.text,
+                                      labelColor: 'blue',
+                                      isDefault: false,
+                                      alias: _aliasController.text.trim(),
                                     );
+                                    await ref
+                                        .read(paymentMethodRepositoryProvider)
+                                        .addPaymentMethod(user.uid, cardToSave);
                                   }
-                                  return;
+                                  if (mounted)
+                                    setState(() => _isSaving = false);
                                 }
 
-                                // Otros métodos (punto de venta, efectivo, móvil)
-                                if (_selectedMethod == 4 &&
-                                    _pagoMovilRefController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('por_favor_ingresa_el_nmero_de_referencia'.tr(),
-                                      ),
-                                      backgroundColor: AppColors.of(context).error,
-                                    ),
-                                  );
-                                  return;
-                                }
-
-                                final typeMap = {
-                                  2: 'pos',
-                                  3: 'cash',
-                                  4: 'mobile',
-                                };
                                 if (mounted) {
                                   context.push(
                                     '/confirmation',
                                     extra: CheckoutData(
-                                      addressData: widget.addressData ??
+                                      addressData:
+                                          widget.addressData ??
                                           CheckoutAddressData(),
                                       paymentData: CheckoutPaymentData(
-                                        methodType:
-                                            typeMap[_selectedMethod] ?? 'other',
+                                        newMethod: tempCard,
+                                        methodType: 'card',
                                       ),
                                     ),
                                   );
                                 }
                                 return;
-                              },
-                      ),
+                              }
+
+                              // Método guardado
+                              if (_selectedMethod == 0) {
+                                if (mounted) {
+                                  context.push(
+                                    '/confirmation',
+                                    extra: CheckoutData(
+                                      addressData:
+                                          widget.addressData ??
+                                          CheckoutAddressData(),
+                                      paymentData: CheckoutPaymentData(
+                                        savedMethodId: _selectedSavedMethodId,
+                                        methodType: 'saved',
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+
+                              // Otros métodos (punto de venta, efectivo, móvil)
+                              if (_selectedMethod == 4 &&
+                                  _pagoMovilRefController.text.trim().isEmpty) {
+                                CustomNotification.show(
+                                  context,
+                                  message:
+                                      'por_favor_ingresa_el_nmero_de_referencia'
+                                          .tr(),
+                                  type: NotificationType.info,
+                                );
+                                return;
+                              }
+
+                              final typeMap = {
+                                2: 'pos',
+                                3: 'cash',
+                                4: 'mobile',
+                              };
+                              if (mounted) {
+                                context.push(
+                                  '/confirmation',
+                                  extra: CheckoutData(
+                                    addressData:
+                                        widget.addressData ??
+                                        CheckoutAddressData(),
+                                    paymentData: CheckoutPaymentData(
+                                      methodType:
+                                          typeMap[_selectedMethod] ?? 'other',
+                                    ),
+                                  ),
+                                );
+                              }
+                              return;
+                            },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   Widget _buildPaymentCard({
@@ -503,7 +518,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('selecciona_una_de_tus_tarjetas_guardadas'.tr(),
+        Text(
+          'selecciona_una_de_tus_tarjetas_guardadas'.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.of(context).textoPrincipal,
             fontWeight: FontWeight.w600,
@@ -554,7 +570,9 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
           children: [
             Icon(
               Icons.credit_card,
-              color: isSelected ? AppColors.of(context).azulSistemas : AppColors.of(context).sombras,
+              color: isSelected
+                  ? AppColors.of(context).azulSistemas
+                  : AppColors.of(context).sombras,
             ),
             SizedBox(width: 12),
             Expanded(
@@ -578,7 +596,10 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: AppColors.of(context).azulSistemas),
+              Icon(
+                Icons.check_circle,
+                color: AppColors.of(context).azulSistemas,
+              ),
           ],
         ),
       ),
@@ -646,7 +667,9 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   activeColor: AppColors.of(context).azulSistemas,
                   checkColor: Colors.white,
                   side: BorderSide.none,
-                  fillColor: WidgetStateProperty.all(AppColors.of(context).azulSistemas),
+                  fillColor: WidgetStateProperty.all(
+                    AppColors.of(context).azulSistemas,
+                  ),
                 ),
               ),
             ),
@@ -654,7 +677,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
             Expanded(
               child: GestureDetector(
                 onTap: () => setState(() => _saveMethod = !_saveMethod),
-                child: Text('guardar_para_mis_futuros_pagos'.tr(),
+                child: Text(
+                  'guardar_para_mis_futuros_pagos'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.of(context).sombras,
                     fontSize: 13,
@@ -686,7 +710,9 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
           decoration: BoxDecoration(
             color: AppColors.of(context).blanco,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+            border: Border.all(
+              color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+            ),
           ),
           child: Column(
             children: [

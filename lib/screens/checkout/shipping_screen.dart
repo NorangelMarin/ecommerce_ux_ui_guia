@@ -15,6 +15,7 @@ import '../../providers/auth_provider.dart';
 import '../../models/address.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 /// Contenedor con los datos de dirección seleccionados en el flujo de checkout.
 class CheckoutAddressData {
@@ -100,18 +101,7 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
           errorMessage = 'El GPS está desactivado en tu dispositivo.';
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red.shade800,
-            duration: Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'configurar'.tr(),
-              textColor: Colors.white,
-              onPressed: () => Geolocator.openLocationSettings(),
-            ),
-          ),
-        );
+        CustomNotification.show(context, message: errorMessage, type: NotificationType.error);
       }
     } catch (e) {
       if (mounted) {
@@ -119,18 +109,7 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
         if (e is Exception) {
           errorMessage = e.toString().replaceFirst('Exception: ', '');
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red.shade800,
-            duration: Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'reintentar'.tr(),
-              textColor: Colors.white,
-              onPressed: _getCurrentLocation,
-            ),
-          ),
-        );
+        CustomNotification.show(context, message: errorMessage, type: NotificationType.error);
       }
     } finally {
       if (mounted) {
@@ -215,7 +194,10 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                       ...addresses.map(
                         (addr) => DropdownMenuItem(
                           value: addr.id,
-                          child: Text('${addr.label} - ${addr.ciudad}'),
+                          child: Text(
+                            '${addr.label} - ${addr.ciudad}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
                       DropdownMenuItem(
@@ -361,13 +343,7 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                                   (addresses.isEmpty ? 'nueva' : null);
 
                               if (currentSelection == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'por_favor_selecciona_una_direccin'.tr(),
-                                    ),
-                                  ),
-                                );
+                                CustomNotification.show(context, message: 'por_favor_selecciona_una_direccin'.tr(), type: NotificationType.info);
                                 return;
                               }
 
@@ -379,29 +355,15 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                                     _urbanizacionController.text
                                         .trim()
                                         .isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'por_favor_completa_todos_los_campos_de_l'
-                                            .tr(),
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'por_favor_completa_todos_los_campos_de_l'
+                                            .tr(), type: NotificationType.error);
                                   return;
                                 }
 
                                 if (_saveAddress &&
                                     _aliasController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'por_favor_ingresa_un_alias_para_guardar'
-                                            .tr(),
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'por_favor_ingresa_un_alias_para_guardar'
+                                            .tr(), type: NotificationType.error);
                                   return;
                                 }
 

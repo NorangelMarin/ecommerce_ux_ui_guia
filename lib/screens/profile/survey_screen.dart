@@ -10,6 +10,7 @@ import '../../providers/order_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
   final String? orderId;
@@ -33,9 +34,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
 
   Future<void> _submitSurvey(String uid) async {
     if (_selectedRating == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('por_favor_selecciona_una_valoración'.tr())),
-      );
+      CustomNotification.show(context, message: 'por_favor_selecciona_una_valoración'.tr(), type: NotificationType.info);
       return;
     }
 
@@ -53,19 +52,12 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('gracias_por_tu_opinión'.tr()),
-            backgroundColor: AppColors.of(context).verdeSaman,
-          ),
-        );
+        CustomNotification.show(context, message: 'gracias_por_tu_opinión'.tr(), type: NotificationType.success);
         // Podríamos navegar al inicio o simplemente dejar que el stream actualice la UI
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al enviar: $e')),
-        );
+        CustomNotification.show(context, message: 'Error al enviar: $e', type: NotificationType.error);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

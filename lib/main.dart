@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'router/app_router.dart';
 import 'providers/accessibility_provider.dart';
+import 'providers/auth_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,25 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<Map<String, dynamic>?>>(userDataProvider, (previous, next) {
+      final userData = next.value;
+      if (userData != null && userData.containsKey('language')) {
+        final lang = userData['language'];
+        final currentLocale = context.locale.languageCode;
+        if (lang != currentLocale) {
+          context.setLocale(Locale(lang));
+          // Update the accessibility provider if needed
+          final accessNotifier = ref.read(accessibilityProvider.notifier);
+          accessNotifier.setLanguage(lang == 'es' ? 'Español' : 'English');
+        }
+      } else if (userData == null) {
+        if (context.locale.languageCode != 'es') {
+          context.setLocale(const Locale('es'));
+          ref.read(accessibilityProvider.notifier).setLanguage('Español');
+        }
+      }
+    });
+
     final accessState = ref.watch(accessibilityProvider);
 
     final double textScaleFactor = 0.85 + (accessState.textScale * 0.3);

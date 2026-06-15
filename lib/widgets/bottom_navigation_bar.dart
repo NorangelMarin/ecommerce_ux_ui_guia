@@ -3,7 +3,10 @@ import '../theme/app_colors.dart';
 import 'guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class BottomNavBar extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/cart_provider.dart';
+
+class BottomNavBar extends ConsumerWidget {
   final int currentIndex;
   final Function(int) onTap;
 
@@ -14,7 +17,9 @@ class BottomNavBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartItems = ref.watch(cartProvider);
+    final cartCount = cartItems.length;    
     return Padding(
       padding: EdgeInsets.all(16),
       child: GuideWrapper(
@@ -50,8 +55,20 @@ class BottomNavBar extends StatelessWidget {
               label: 'inicio'.tr(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              activeIcon: Icon(Icons.shopping_cart),
+              icon: cartCount > 0 
+                  ? Badge(
+                      label: Text(cartCount.toString()),
+                      backgroundColor: Colors.red,
+                      child: Icon(Icons.shopping_cart_outlined),
+                    )
+                  : Icon(Icons.shopping_cart_outlined),
+              activeIcon: cartCount > 0
+                  ? Badge(
+                      label: Text(cartCount.toString()),
+                      backgroundColor: Colors.red,
+                      child: Icon(Icons.shopping_cart),
+                    )
+                  : Icon(Icons.shopping_cart),
               label: 'carrito'.tr(),
             ),
             BottomNavigationBarItem(

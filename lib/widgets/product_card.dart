@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'custom_notification.dart';
 
 enum CardType { vertical, horizontal, carrito }
 
@@ -158,13 +159,7 @@ class ProductCard extends StatelessWidget {
                       onTap:
                           onCartPressed ??
                           () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('$title añadido al carrito'),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: AppColors.of(context).azulSistemas,
-                              ),
-                            );
+                            CustomNotification.show(context, message: '$title añadido al carrito', type: NotificationType.success);
                           },
                       child: Row(
                         children: [
@@ -303,15 +298,7 @@ class ProductCard extends StatelessWidget {
                         onTap:
                             onFavoritePressed ??
                             () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '$title añadido a la lista de deseos',
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor: AppColors.of(context).naranjaUnimet,
-                                ),
-                              );
+                              CustomNotification.show(context, message: '$title añadido a la lista de deseos', type: NotificationType.info);
                             },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -514,15 +501,7 @@ class ProductCard extends StatelessWidget {
                     onTap:
                         onFavoritePressed ??
                         () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '$title${'aadido_a_la_lista_de_deseos'.tr()}',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: AppColors.of(context).naranjaUnimet,
-                            ),
-                          );
+                          CustomNotification.show(context, message: '$title${'aadido_a_la_lista_de_deseos'.tr()}', type: NotificationType.info);
                         },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
