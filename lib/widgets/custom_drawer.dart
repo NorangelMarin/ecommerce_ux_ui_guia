@@ -6,6 +6,7 @@ import '../theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../widgets/guide_wrapper.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
@@ -35,57 +36,85 @@ class CustomDrawer extends ConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: 32),
-            _buildAvatar(context, photoUrl),
-            SizedBox(height: 16),
-            Text(
-              userData?['displayName']?.isNotEmpty == true
-                  ? userData!['displayName']
-                  : firebaseUser?.displayName ?? 'Usuario',
-              style: theme.textTheme.displayMedium?.copyWith(
-                color: AppColors.of(context).textoPrincipal,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              firebaseUser?.email ?? 'usuario@correo.com',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.of(context).sombras,
-              ),
-            ),
-            SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () {
-                context.pop();
-                context.push('/profile');
-              },
-              icon: Icon(Icons.edit_outlined, size: 16, color: AppColors.of(context).azulSistemas),
-              label: Text('editar_perfil'.tr(),
+            GuideWrapper(
+              id: 'drawer_perfil',
+              title: 'Perfil',
+              description: 'Desde aquí puedes acceder a tu configuración personal y editar los datos de tu cuenta.',
+              child: Column(
+                children: [
+                  _buildAvatar(context, photoUrl),
+                  SizedBox(height: 16),
+                  Text(
+                    userData?['displayName']?.isNotEmpty == true
+                        ? userData!['displayName']
+                        : firebaseUser?.displayName ?? 'Usuario',
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      color: AppColors.of(context).textoPrincipal,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    firebaseUser?.email ?? 'usuario@correo.com',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.of(context).sombras,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Builder(
+                    builder: (context) {
+                      final editProfileColor = theme.brightness == Brightness.dark 
+                          ? AppColors.of(context).naranjaUnimet 
+                          : AppColors.of(context).azulSistemas;
+                      return OutlinedButton.icon(
+                    onPressed: () {
+                      context.pop();
+                      context.push('/profile');
+                    },
+                    icon: Icon(Icons.edit_outlined, size: 16, color: editProfileColor),
+                    label: Text('editar_perfil'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.of(context).azulSistemas,
+                  color: editProfileColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.of(context).azulSistemas),
+                side: BorderSide(color: editProfileColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 minimumSize: Size(0, 32),
               ),
-            ),
-            SizedBox(height: 16),
+            );
+            }
+          ),
+          ],
+        ),
+      ),
+      SizedBox(height: 16),
             
-            _buildGreenDivider(context),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 36.0),
+              child: GuideWrapper(
+                id: 'drawer_options',
+                title: 'Navegación Centralizada',
+                description: 'Un menú lateral estructurado (Hamburguesa) facilita el acceso a secciones secundarias sin saturar la barra de navegación inferior, reduciendo la carga cognitiva.',
+                alignment: Alignment.centerRight,
+                child: Divider(
+                  color: AppColors.of(context).verdeSaman,
+                  thickness: 1,
+                ),
+              ),
+            ),
 
             // Opciones del menú (Scrollable)
             Expanded(
               child: ListView(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                children: [
+              children: [
                   _buildDrawerItem(context, Icons.home, 'inicio'.tr(), '/home', currentRoute == '/home'),
                   _buildDrawerItem(context, Icons.history, 'historial_de_compras'.tr(), '/history', currentRoute == '/history'),
                   _buildDrawerItem(context, Icons.location_on, 'mis_direcciones'.tr(), '/addresses', currentRoute == '/addresses'),

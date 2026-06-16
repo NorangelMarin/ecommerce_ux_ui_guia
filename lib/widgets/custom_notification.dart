@@ -33,6 +33,11 @@ class CustomNotification {
         break;
     }
 
+    final trimmedMessage = message.trim();
+    final formattedMessage = trimmedMessage.isNotEmpty 
+        ? '${trimmedMessage[0].toUpperCase()}${trimmedMessage.substring(1)}' 
+        : trimmedMessage;
+
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -42,7 +47,7 @@ class CustomNotification {
             SizedBox(width: 12),
             Expanded(
               child: Text(
-                message,
+                formattedMessage,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,

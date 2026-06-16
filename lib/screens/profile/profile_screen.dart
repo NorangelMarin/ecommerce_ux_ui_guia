@@ -328,6 +328,7 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
           children: [
             // Foto de Perfil
             GuideWrapper(
+              id: 'profile_photo',
               title: 'personalización'.tr(),
               description:
                   'Permitir subir una foto de perfil refuerza la identidad y compromiso del usuario (engagement), al mismo tiempo que proporciona un feedback visual inmediato de su cuenta.',
@@ -424,6 +425,7 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
             SizedBox(height: 40),
 
             GuideWrapper(
+              id: 'profile_editable_data',
               title: 'prevención_de_errores_y_control'.tr(),
               description:
                   'Hacer que los datos obligatorios (como el teléfono) sean editables directamente aquí otorga flexibilidad al usuario y previene abandonos del carrito por falta de información vital.',
@@ -535,6 +537,7 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
 
             // Seguridad de la cuenta
             GuideWrapper(
+              id: 'profile_security',
               title: 'confianza_y_autonomía'.tr(),
               description:
                   'Centralizar los ajustes de seguridad transmite profesionalismo al usuario. Darle la libertad de gestionar su contraseña o ver opciones como el 2FA mejora drásticamente la percepción de seguridad del sistema.',

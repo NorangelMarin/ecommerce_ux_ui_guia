@@ -217,36 +217,30 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                   if ((_selectedAddress ??
                           (addresses.isEmpty ? 'nueva' : null)) ==
                       'nueva') ...[
-                    GuideWrapper(
-                      title: 'automatización_y_prevención_de_errores'.tr(),
-                      description:
-                          'Permitir el uso del GPS previene errores tipográficos en la dirección y acelera el llenado del formulario, lo que reduce la fricción y aumenta la conversión.',
-                      alignment: Alignment.topCenter,
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          icon: _isGettingLocation
-                              ? SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Icon(Icons.my_location, size: 18),
-                          label: Text('usar_mi_ubicación_actual'.tr()),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.of(context).naranjaUnimet,
-                            side: BorderSide(color: AppColors.of(context).naranjaUnimet),
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: _isGettingLocation
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Icon(Icons.my_location, size: 18),
+                        label: Text('usar_mi_ubicacion_actual'.tr()),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.of(context).naranjaUnimet,
+                          side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          onPressed: _isGettingLocation
-                              ? null
-                              : _getCurrentLocation,
                         ),
+                        onPressed: _isGettingLocation
+                            ? null
+                            : _getCurrentLocation,
                       ),
                     ),
                     SizedBox(height: 16),

@@ -22,6 +22,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onTap; // Para ir al detalle
   final bool isFavorite;
   final VoidCallback? onFavoritePressed;
+  final bool showTooltip;
 
   const ProductCard({
     super.key,
@@ -40,6 +41,7 @@ class ProductCard extends StatelessWidget {
     this.onTap,
     this.isFavorite = false,
     this.onFavoritePressed,
+    this.showTooltip = false,
   });
 
   @override
@@ -84,22 +86,15 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildVerticalCard(BuildContext context) {
     final theme = Theme.of(context);
-    return Semantics(
-      label: 'Producto: $title, Precio: $price, Categoría: $category',
-      container: true,
-      child: GuideWrapper(
-        title: 'tarjeta_de_producto_ley_de'.tr(),
-        description:
-            'Los elementos relacionados (imagen, precio, título) están agrupados, facilitando el escaneo visual. El área interactiva abarca toda la tarjeta para evitar toques fallidos en móviles.',
-        alignment: Alignment.topRight,
-        child: Container(
-          width: 160,
-          decoration: BoxDecoration(
-            color: AppColors.of(context).fondoTarjetas,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
-          ),
-          child: Column(
+    
+    Widget content = Container(
+      width: 160,
+      decoration: BoxDecoration(
+        color: AppColors.of(context).fondoTarjetas,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+      ),
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
@@ -185,30 +180,37 @@ class ProductCard extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
+        );
+
+    if (showTooltip) {
+      content = GuideWrapper(
+        title: 'tarjeta_de_producto_ley_de'.tr(),
+        description:
+            'Los elementos relacionados (imagen, precio, título) están agrupados, facilitando el escaneo visual. El área interactiva abarca toda la tarjeta para evitar toques fallidos en móviles.',
+        alignment: Alignment.topRight,
+        child: content,
+      );
+    }
+    
+    return Semantics(
+      label: 'Producto: $title, Precio: $price, Categoría: $category',
+      container: true,
+      child: content,
     );
   }
 
   Widget _buildHorizontalCard(BuildContext context) {
     final theme = Theme.of(context);
-    return Semantics(
-      label: 'Producto: $title, Precio: $price',
-      container: true,
-      child: GuideWrapper(
-        title: 'tarjeta_de_lista_contraste_y'.tr(),
-        description:
-            'El diseño horizontal maximiza el espacio vertical en listas largas. El precio resalta en verde para indicar disponibilidad financiera rápida, crucial en el mercado local.',
-        alignment: Alignment.topRight,
-        child: Container(
-          width: 280, // Ancho fijo para scroll horizontal
-          height: 140,
-          decoration: BoxDecoration(
-            color: AppColors.of(context).fondoTarjetas,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
-          ),
-          child: Row(
+    
+    Widget content = Container(
+      width: 280, // Ancho fijo para scroll horizontal
+      height: 140,
+      decoration: BoxDecoration(
+        color: AppColors.of(context).fondoTarjetas,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+      ),
+      child: Row(
             children: [
               GestureDetector(
                 onTap: onTap,
@@ -332,9 +334,23 @@ class ProductCard extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        );
+
+      if (showTooltip) {
+        content = GuideWrapper(
+          title: 'tarjeta_de_lista_contraste_y'.tr(),
+          description:
+              'El diseño horizontal maximiza el espacio vertical en listas largas. El precio resalta en verde para indicar disponibilidad financiera rápida, crucial en el mercado local.',
+          alignment: Alignment.topRight,
+          child: content,
+        );
+      }
+      
+      return Semantics(
+        label: 'Producto: $title, Precio: $price',
+        container: true,
+        child: content,
+      );
   }
 
   Widget _buildCarritoCard(BuildContext context) {

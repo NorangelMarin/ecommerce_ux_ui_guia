@@ -80,8 +80,13 @@ class ProductDetailScreen extends ConsumerWidget {
         leadingIcon: Icons.arrow_back_ios_new, // Flecha iOS como en el diseño
         onLeadingPressed: () => context.pop(),
         actionIcon: isFavorite ? Icons.favorite : Icons.favorite_border,
-        onActionPressed: () =>
-            ref.read(wishlistProvider.notifier).toggleProduct(productId),
+        onActionPressed: () {
+          final isAdding = !wishlistIds.contains(productId);
+          ref.read(wishlistProvider.notifier).toggleProduct(productId);
+          if (isAdding) {
+            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+          }
+        },
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -135,19 +140,25 @@ class ProductDetailScreen extends ConsumerWidget {
                         color: AppColors.of(context).azulSistemas,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.zoom_in,
-                          color: AppColors.of(context).blanco,
-                          size: 22,
+                      child: GuideWrapper(
+                        id: 'detail_zoom',
+                        title: 'Reducción de incertidumbre',
+                        description: 'Permitir visualizar el producto en detalle reduce la fricción en la decisión de compra, ya que compensa la imposibilidad física de examinar el producto.',
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.zoom_in,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          onPressed: () => _openImageZoom(
+                            context,
+                            product.imageUrl.isNotEmpty
+                                ? product.imageUrl
+                                : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
+                          ),
+                          padding: EdgeInsets.zero,
                         ),
-                        onPressed: () => _openImageZoom(
-                          context,
-                          product.imageUrl.isNotEmpty
-                              ? product.imageUrl
-                              : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
-                        ),
-                        padding: EdgeInsets.zero,
                       ),
                     ),
                   ),
@@ -262,7 +273,7 @@ class ProductDetailScreen extends ConsumerWidget {
                                 : 0.0,
                           ),
                         );
-                    CustomNotification.show(context, message: 'anadido_al_carrito'.tr(args: [product.title]), type: NotificationType.success);
+                    CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
                   },
                 ),
               ),
@@ -305,7 +316,7 @@ class ProductDetailScreen extends ConsumerWidget {
                       _buildSpecRow(context, 'Categoría principal', getCategoryName(product.category)),
                       if (product.categories.length > 1)
                         _buildSpecRow(context, 
-                          'Otras categorías',
+                          'otras_categorías'.tr(),
                           product.categories.skip(1).map(getCategoryName).join(', '),
                         ),
                       _buildSpecRow(context, 
@@ -320,6 +331,7 @@ class ProductDetailScreen extends ConsumerWidget {
             ),
 
             // Reseñas
+            SizedBox(height: 24),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(

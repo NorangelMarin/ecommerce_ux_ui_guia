@@ -19,7 +19,7 @@ class BottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartItems = ref.watch(cartProvider);
-    final cartCount = cartItems.length;    
+    final cartCount = cartItems.fold<int>(0, (sum, item) => sum + item.quantity);
     return Padding(
       padding: EdgeInsets.all(16),
       child: GuideWrapper(

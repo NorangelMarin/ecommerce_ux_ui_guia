@@ -186,13 +186,8 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   SizedBox(height: 32),
 
                   // Opciones de Pago
-                  GuideWrapper(
-                    title: 'flexibilidad_y_contexto_local'.tr(),
-                    description:
-                        'Ofrecer múltiples opciones de pago (Tarjetas, Divisas, Pago Móvil) se adapta a la realidad económica del usuario venezolano, previniendo el abandono del carrito por falta de opciones.',
-                    alignment: Alignment.topRight,
-                    child: Column(
-                      children: [
+                  Column(
+                    children: [
                         if (paymentMethods.isNotEmpty) ...[
                           _buildPaymentCard(
                             index: 0,
@@ -236,8 +231,6 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                         ),
                       ],
                     ),
-                  ),
-
                   SizedBox(height: 24),
 
                   SizedBox(height: 48),

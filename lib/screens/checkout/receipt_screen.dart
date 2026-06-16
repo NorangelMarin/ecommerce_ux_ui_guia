@@ -45,8 +45,14 @@ class ReceiptScreen extends ConsumerWidget {
               color: AppColors.of(context).textoPrincipal,
             ),
           ),
-          leadingIcon: Icons.menu,
-          onLeadingPressed: null,
+          leadingIcon: fromCheckout ? Icons.menu : Icons.arrow_back_ios_new,
+          onLeadingPressed: fromCheckout ? null : () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/history');
+            }
+          },
           showActionIcon: false,
         ),
         body: SingleChildScrollView(
