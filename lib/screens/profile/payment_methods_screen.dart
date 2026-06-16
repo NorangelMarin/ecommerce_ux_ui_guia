@@ -43,7 +43,6 @@ class PaymentMethodsScreen extends ConsumerWidget {
               id: 'payment_methods_title',
               title: 'Gestión de Pagos',
               description: 'Permitir que el usuario guarde y gestione sus métodos de pago acelera el proceso de checkout en compras futuras, reduciendo la fricción y mejorando la tasa de conversión.',
-              alignment: Alignment.bottomLeft,
               child: Text('tus_mtodos_de_pago'.tr(),
                 style: theme.textTheme.displayMedium?.copyWith(
                   fontWeight: FontWeight.bold,

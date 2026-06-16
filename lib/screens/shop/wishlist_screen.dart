@@ -361,8 +361,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             child: GuideWrapper(
               id: 'wishlist_title',
               title: 'Artículos Guardados',
-              description: 'Los productos que te interesan se guardan aquí. Puedes añadirlos directamente al carrito o removerlos tocando el ícono de corazón.',
-              alignment: Alignment.bottomRight,
+              description: 'La lista de deseos actúa como un puente entre el descubrimiento y la compra diferida. Permite al usuario guardar productos para decisiones futuras, mejorando la retención y la conversión a largo plazo.',
               child: Text(
                 _searchQuery.isNotEmpty
                     ? '${'resultados_de'.tr()}"$_searchQuery"'

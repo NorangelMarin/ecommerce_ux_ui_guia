@@ -92,7 +92,6 @@ class ReceiptScreen extends ConsumerWidget {
                       title: 'retroalimentacion_del_sistema'.tr(),
                       description:
                           'Proporcionar una respuesta visual clara y positiva tras una acción crítica (como un pago) confirma el éxito de la tarea, reduciendo la ansiedad y brindando tranquilidad al usuario.',
-                      alignment: Alignment.centerRight,
                       child: Container(
                         width: 100,
                         height: 100,

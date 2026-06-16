@@ -19,7 +19,6 @@ class CheckoutStepper extends StatelessWidget {
         id: 'checkout_stepper_guide',
         title: 'Barra de Progreso',
         description: 'Indica en qué paso del proceso de compra te encuentras. Dividir el checkout en pasos reduce la fricción y mejora la tasa de conversión.',
-        alignment: Alignment.bottomCenter,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

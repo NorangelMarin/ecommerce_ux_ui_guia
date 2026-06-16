@@ -115,7 +115,6 @@ class OrderStatusScreen extends ConsumerWidget {
                         title: 'reconocimiento_vs_recuerdo'.tr(),
                         description:
                             'Proveer un ID de orden claro y truncado cumple con la heurística de "Reconocimiento antes que recuerdo", dando al usuario control y confianza sobre su transacción.',
-                        alignment: Alignment.centerRight,
                         child: Text(
                           '${'orden'.tr()} ${order.id.length > 8 ? order.id.substring(0, 8).toUpperCase() : order.id.toUpperCase()}',
                           style: theme.textTheme.displayMedium?.copyWith(
@@ -135,7 +134,6 @@ class OrderStatusScreen extends ConsumerWidget {
                         title: 'visibilidad_del_estado_del_sistema'.tr(),
                         description:
                             'Mantener al usuario informado sobre lo que está ocurriendo a través de retroalimentación apropiada en tiempo razonable (Heurística de Nielsen #1).',
-                        alignment: Alignment.topRight,
                         child: _buildTimelineBlock(context, order.status),
                       ),
 
@@ -226,7 +224,6 @@ class OrderStatusScreen extends ConsumerWidget {
       title: 'agrupación_y_carga_cognitiva'.tr(),
       description:
           'Agrupar la información esencial (artículos, total, entrega) en una tarjeta reduce la carga cognitiva del usuario, aplicando la Ley de Miller y principios de Gestalt.',
-      alignment: Alignment.topRight,
       child: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(

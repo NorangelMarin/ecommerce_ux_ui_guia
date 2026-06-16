@@ -144,7 +144,6 @@ class ProductDetailScreen extends ConsumerWidget {
                         id: 'detail_zoom',
                         title: 'Reducción de incertidumbre',
                         description: 'Permitir visualizar el producto en detalle reduce la fricción en la decisión de compra, ya que compensa la imposibilidad física de examinar el producto.',
-                        alignment: Alignment.topLeft,
                         child: IconButton(
                           icon: Icon(
                             Icons.zoom_in,
@@ -293,11 +292,16 @@ class ProductDetailScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('especificaciones_tcnicas'.tr(),
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: AppColors.of(context).textoPrincipal,
+                    GuideWrapper(
+                      id: 'product_detail_specs',
+                      title: 'Transparencia de Información',
+                      description: 'Mostrar especificaciones técnicas completas y organizadas construye confianza y reduce la incertidumbre del usuario, lo que disminuye las devoluciones y aumenta la conversión.',
+                      child: Text('especificaciones_tcnicas'.tr(),
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppColors.of(context).textoPrincipal,
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -342,11 +346,16 @@ class ProductDetailScreen extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          Text('reseas'.tr(),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              color: AppColors.of(context).azulSistemas,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          GuideWrapper(
+                            id: 'product_detail_reviews',
+                            title: 'Social Proof (Prueba Social)',
+                            description: 'Las reseñas de otros usuarios son uno de los factores más influyentes en la decisión de compra. El "Social Proof" valida la calidad del producto y genera confianza instantánea.',
+                            child: Text('reseas'.tr(),
+                              style: theme.textTheme.displayMedium?.copyWith(
+                                color: AppColors.of(context).azulSistemas,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           SizedBox(width: 8),

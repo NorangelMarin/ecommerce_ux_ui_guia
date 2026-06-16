@@ -200,7 +200,6 @@ class HistoryScreen extends ConsumerWidget {
                   title: 'visibilidad_del_estado_del_sistema'.tr(),
                   description:
                       'Mantener informado al usuario sobre el estado de su orden mediante colores semánticos (ej. verde para entregado) genera confianza y reduce la ansiedad posventa.',
-                  alignment: Alignment.topRight,
                   child: _buildStatusBadge(context, theme, order, statusColor),
                 )
               else

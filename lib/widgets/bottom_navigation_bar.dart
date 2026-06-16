@@ -25,7 +25,6 @@ class BottomNavBar extends ConsumerWidget {
       child: GuideWrapper(
         title: 'navegación_inferior_flotante'.tr(),
         description: 'La navegación inferior flotante separa visualmente los controles del contenido (efecto isla), mejorando la ergonomía (pulgar) y modernizando la interfaz. Provee acceso rápido a las secciones clave de la app de comercio electrónico.',
-        alignment: Alignment.topRight,
         child: Container(
           decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,

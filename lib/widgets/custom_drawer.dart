@@ -36,63 +36,58 @@ class CustomDrawer extends ConsumerWidget {
         child: Column(
           children: [
             SizedBox(height: 32),
-            GuideWrapper(
-              id: 'drawer_perfil',
-              title: 'Perfil',
-              description: 'Desde aquí puedes acceder a tu configuración personal y editar los datos de tu cuenta.',
-              child: Column(
-                children: [
-                  _buildAvatar(context, photoUrl),
-                  SizedBox(height: 16),
-                  Text(
-                    userData?['displayName']?.isNotEmpty == true
-                        ? userData!['displayName']
-                        : firebaseUser?.displayName ?? 'Usuario',
-                    style: theme.textTheme.displayMedium?.copyWith(
-                      color: AppColors.of(context).textoPrincipal,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Column(
+              children: [
+                _buildAvatar(context, photoUrl),
+                SizedBox(height: 16),
+                Text(
+                  userData?['displayName']?.isNotEmpty == true
+                      ? userData!['displayName']
+                      : firebaseUser?.displayName ?? 'Usuario',
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    color: AppColors.of(context).textoPrincipal,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    firebaseUser?.email ?? 'usuario@correo.com',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.of(context).sombras,
-                    ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  firebaseUser?.email ?? 'usuario@correo.com',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.of(context).sombras,
                   ),
-                  SizedBox(height: 12),
-                  Builder(
-                    builder: (context) {
-                      final editProfileColor = theme.brightness == Brightness.dark 
-                          ? AppColors.of(context).naranjaUnimet 
-                          : AppColors.of(context).azulSistemas;
-                      return OutlinedButton.icon(
-                    onPressed: () {
-                      context.pop();
-                      context.push('/profile');
-                    },
-                    icon: Icon(Icons.edit_outlined, size: 16, color: editProfileColor),
-                    label: Text('editar_perfil'.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: editProfileColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
                 ),
+                SizedBox(height: 12),
+                Builder(
+                  builder: (context) {
+                    final editProfileColor = theme.brightness == Brightness.dark 
+                        ? AppColors.of(context).naranjaUnimet 
+                        : AppColors.of(context).azulSistemas;
+                    return OutlinedButton.icon(
+                  onPressed: () {
+                    context.pop();
+                    context.push('/profile');
+                  },
+                  icon: Icon(Icons.edit_outlined, size: 16, color: editProfileColor),
+                  label: Text('editar_perfil'.tr(),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: editProfileColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: editProfileColor),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                minimumSize: Size(0, 32),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: editProfileColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            );
-            }
-          ),
-          ],
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              minimumSize: Size(0, 32),
+            ),
+          );
+          }
         ),
+        ],
       ),
       SizedBox(height: 16),
             
