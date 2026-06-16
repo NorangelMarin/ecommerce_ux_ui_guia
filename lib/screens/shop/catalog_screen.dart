@@ -367,7 +367,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                               id: 'catalog_voice_search',
                               title: 'Búsqueda por Voz y Texto',
                               description: 'Usa el micrófono para buscar por voz o escribe características del producto para encontrar lo que necesitas rápidamente.',
-                              alignment: Alignment.bottomRight,
                               child: IconButton(
                                 icon: Icon(
                                   _isListening ? Icons.mic : Icons.mic_none,
@@ -490,22 +489,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: GuideWrapper(
-                  id: 'catalog_product_card',
-                  title: 'Tarjeta de Producto',
-                  description: 'Toca el producto para ver más detalles o añádelo directamente a tu lista de deseos o al carrito.',
-                  alignment: Alignment.topRight,
-                  child: Text(
-                    _searchQuery.isNotEmpty
-                        ? '${'resultados_de'.tr()}"$_searchQuery"'
-                        : _selectedCategory != null
-                        ? '${'categora'.tr()}: $_selectedCategory'
-                        : 'todos_los_productos'.tr(),
-                    style: theme.textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.of(context).textoPrincipal,
-                      fontSize: 20,
-                    ),
+                child: Text(
+                  _searchQuery.isNotEmpty
+                      ? '${'resultados_de'.tr()}"$_searchQuery"'
+                      : _selectedCategory != null
+                      ? '${'categora'.tr()}: $_selectedCategory'
+                      : 'todos_los_productos'.tr(),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.of(context).textoPrincipal,
+                    fontSize: 20,
                   ),
                 ),
               ),
@@ -556,23 +549,17 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: GuideWrapper(
-                        id: 'catalog_product_card',
-                        title: 'Tarjeta de Producto',
-                        description: 'Los elementos de cada producto están agrupados para facilitar el escaneo visual. El área interactiva abarca toda la tarjeta para evitar toques fallidos.',
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          productsAsync.hasValue
-                              ? (_searchQuery.isNotEmpty
-                                    ? '${'mostrando_resultados_de'.tr()}"$_searchQuery"'
-                                    : _selectedCategory != null
-                                    ? '${'mostrando_resultados_de'.tr()}"$_selectedCategory"'
-                                    : 'mostrando_todos_los_articulos'.tr())
-                              : 'cargando_artculos'.tr(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.of(context).sombras,
-                            height: 1.2,
-                          ),
+                      child: Text(
+                        productsAsync.hasValue
+                            ? (_searchQuery.isNotEmpty
+                                  ? '${'mostrando_resultados_de'.tr()}"$_searchQuery"'
+                                  : _selectedCategory != null
+                                  ? '${'mostrando_resultados_de'.tr()}"$_selectedCategory"'
+                                  : 'mostrando_todos_los_articulos'.tr())
+                            : 'cargando_artculos'.tr(),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.of(context).sombras,
+                          height: 1.2,
                         ),
                       ),
                     ),
@@ -580,7 +567,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                       title: 'filtros_y_ordenamiento_control_del'.tr(),
                       description:
                           'Permitir que el usuario filtre y ordene el catálogo reduce la frustración al buscar productos específicos. El diseño compacto a la derecha se alinea con los patrones estándar y facilita el acceso al pulgar.',
-                      alignment: Alignment.topRight,
                       child: Row(
                         children: [
                           Container(
@@ -763,6 +749,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                           onTap: () =>
                               context.push('/product_detail/${product.id}'),
                         );
+
+                        if (index == 0) {
+                          return GuideWrapper(
+                            id: 'catalog_combined',
+                            title: 'Tarjeta de producto',
+                            description: 'Mostrar todos los artículos agrupados en una cuadrícula facilita la interacción, el escaneo visual y le permite al usuario buscar rápidamente su producto, reduciendo la frustración y el abandono.',
+                            child: card,
+                          );
+                        }
+
                         return card;
                       },
                     );

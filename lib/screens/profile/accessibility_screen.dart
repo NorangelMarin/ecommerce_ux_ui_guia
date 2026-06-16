@@ -50,7 +50,6 @@ class AccessibilityScreen extends ConsumerWidget {
               id: 'accessibility_title',
               title: 'Accesibilidad',
               description: 'Integrar opciones de accesibilidad desde el inicio del diseño asegura que la app sea usable por una audiencia más amplia, cumpliendo con principios de diseño inclusivo.',
-              alignment: Alignment.bottomRight,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

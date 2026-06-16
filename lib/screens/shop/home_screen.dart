@@ -217,11 +217,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('categorias_destacadas'.tr(),
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.of(context).textoPrincipal,
-                    fontSize: 18,
+                child: GuideWrapper(
+                  id: 'home_categorias_destacadas',
+                  title: 'Categorías Destacadas',
+                  description: 'Agrupar productos en categorías claramente definidas ayuda al usuario a encontrar lo que busca más rápido, reduciendo la carga cognitiva.',
+                  child: Text('categorias_destacadas'.tr(),
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.of(context).textoPrincipal,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),
@@ -235,7 +240,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 title: 'bento_grid_de_categorías'.tr(),
                 description:
                     'Este diseño tipo "bento" organiza las categorías de forma visualmente atractiva y fácil de tocar (Ley de Fitts). Los bloques de color sólido con iconos grandes ayudan a la identificación rápida y reducen la carga cognitiva para usuarios móviles en Caracas que buscan agilidad en sus compras.',
-                alignment: Alignment.topRight,
                 child: SizedBox(
                   height: 180,
                   child: Row(
@@ -365,7 +369,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     id: 'home_productos_destacados',
                     title: 'productos_destacados'.tr(),
                     description: 'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
-                    alignment: Alignment.bottomRight,
                     child: Text('productos_destacados'.tr(),
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -480,7 +483,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   id: 'home_ofertas_especiales',
                   title: 'ofertas_especiales_aversión_a_la'.tr(),
                   description: 'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
-                  alignment: Alignment.bottomRight,
                   child: Text('ofertas_especiales'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,

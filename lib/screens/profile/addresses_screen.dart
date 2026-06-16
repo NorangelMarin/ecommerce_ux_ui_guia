@@ -87,8 +87,7 @@ class AddressesScreen extends ConsumerWidget {
                             return GuideWrapper(
                               id: 'addresses_first_item',
                               title: 'Dirección Guardada',
-                              description: 'Tus direcciones se guardan para acelerar el proceso de pago. Puedes editarlas o eliminarlas fácilmente desde aquí.',
-                              alignment: Alignment.topRight,
+                              description: 'Permitir al usuario gestionar múltiples direcciones reduce drásticamente la fricción durante el checkout. Al almacenar esta información de forma segura, se minimiza el abandono del carrito causado por formularios extensos.',
                               child: card,
                             );
                           }

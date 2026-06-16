@@ -61,7 +61,6 @@ class _FaqScreenState extends State<FaqScreen> {
           id: 'faq_title',
           title: 'Preguntas Frecuentes',
           description: 'Ofrecer una sección de preguntas frecuentes ayuda al usuario a resolver dudas de manera autónoma y rápida, reduciendo la carga de soporte al cliente.',
-          alignment: Alignment.bottomRight,
           child: Text('preguntas_frecuentes'.tr(),
             style: theme.textTheme.displayMedium?.copyWith(
               fontSize: 14,
@@ -82,7 +81,6 @@ class _FaqScreenState extends State<FaqScreen> {
               id: 'faq_search',
               title: 'Buscador Predictivo',
               description: 'Incluir una barra de búsqueda en las FAQ permite a los usuarios encontrar soluciones específicas sin tener que navegar por toda la lista, ahorrando tiempo y esfuerzo.',
-              alignment: Alignment.bottomRight,
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.of(context).blanco,
@@ -229,7 +227,6 @@ class _FaqScreenState extends State<FaqScreen> {
       id: 'faq_support_card',
       title: 'Escalamiento de Soporte',
       description: 'Ofrecer una opción clara para contactar a soporte al final de las FAQ garantiza que el usuario no se sienta abandonado si su duda no fue resuelta.',
-      alignment: Alignment.topRight,
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(24),
@@ -262,18 +259,30 @@ class _FaqScreenState extends State<FaqScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: theme.brightness == Brightness.dark 
+                    ? Colors.white.withValues(alpha: 0.15) 
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                border: theme.brightness == Brightness.dark 
+                    ? Border.all(color: Colors.white.withValues(alpha: 0.3)) 
+                    : null,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.chat_bubble_outline, color: Colors.white, size: 18),
+                  Icon(
+                    Icons.chat_bubble_outline, 
+                    color: theme.brightness == Brightness.dark 
+                        ? Colors.white 
+                        : AppColors.of(context).azulSistemas, 
+                    size: 18,
+                  ),
                   SizedBox(width: 8),
                   Text('contactar_con_soporte'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
+                      color: theme.brightness == Brightness.dark 
+                          ? Colors.white 
+                          : AppColors.of(context).azulSistemas,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),

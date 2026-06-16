@@ -229,7 +229,7 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                                 ),
                               )
                             : Icon(Icons.my_location, size: 18),
-                        label: Text('usar_mi_ubicacion_actual'.tr()),
+                        label: Text('usar_mi_ubicación_actual'.tr()),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.of(context).naranjaUnimet,
                           side: BorderSide(color: AppColors.of(context).naranjaUnimet),

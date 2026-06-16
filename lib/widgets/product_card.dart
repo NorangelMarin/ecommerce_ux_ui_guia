@@ -187,7 +187,6 @@ class ProductCard extends StatelessWidget {
         title: 'tarjeta_de_producto_ley_de'.tr(),
         description:
             'Los elementos relacionados (imagen, precio, título) están agrupados, facilitando el escaneo visual. El área interactiva abarca toda la tarjeta para evitar toques fallidos en móviles.',
-        alignment: Alignment.topRight,
         child: content,
       );
     }
@@ -341,7 +340,6 @@ class ProductCard extends StatelessWidget {
           title: 'tarjeta_de_lista_contraste_y'.tr(),
           description:
               'El diseño horizontal maximiza el espacio vertical en listas largas. El precio resalta en verde para indicar disponibilidad financiera rápida, crucial en el mercado local.',
-          alignment: Alignment.topRight,
           child: content,
         );
       }
