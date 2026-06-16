@@ -32,8 +32,14 @@ class OrderStatusScreen extends ConsumerWidget {
             color: AppColors.of(context).textoPrincipal,
           ),
         ),
-        leadingIcon: Icons.menu,
-        onLeadingPressed: null,
+        leadingIcon: Icons.arrow_back_ios_new,
+        onLeadingPressed: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/history');
+          }
+        },
         showActionIcon: false,
       ),
       body: ordersAsync.when(
@@ -307,12 +313,12 @@ class OrderStatusScreen extends ConsumerWidget {
 
     final step1Active =
         st == 'pago confirmado' ||
-        st == 'confirmado' ||
-        st == 'preparando' ||
+        st == 'en preparación' ||
+        st == 'en preparacion' ||
         st == 'enviado' ||
         st == 'entregado';
     final step2Active =
-        st == 'preparando' || st == 'enviado' || st == 'entregado';
+        st == 'en preparación' || st == 'en preparacion' || st == 'enviado' || st == 'entregado';
     final step3Active = st == 'enviado' || st == 'entregado';
     final step4Active = st == 'entregado';
 
@@ -618,5 +624,23 @@ class OrderStatusScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _translateStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'en proceso':
+        return 'en_proceso'.tr();
+      case 'enviado':
+        return 'enviado'.tr();
+      case 'entregado':
+        return 'entregado'.tr();
+      case 'pago confirmado':
+        return 'pago_confirmado'.tr();
+      case 'en preparación':
+      case 'en preparacion':
+        return 'en_preparación'.tr();
+      default:
+        return status;
+    }
   }
 }

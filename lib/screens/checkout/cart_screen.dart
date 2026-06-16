@@ -12,6 +12,7 @@ import '../../providers/wishlist_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -84,7 +85,13 @@ class CartScreen extends ConsumerWidget {
                           }
                         },
                         isFavorite: wishlistIds.contains(item.productId),
-                        onFavoritePressed: () => ref.read(wishlistProvider.notifier).toggleProduct(item.productId),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(item.productId);
+                          ref.read(wishlistProvider.notifier).toggleProduct(item.productId);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${item.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onDelete: () => ref.read(cartProvider.notifier).removeItem(item.productId),
                         onTap: () => context.push('/product_detail/${item.productId}'),
                       );

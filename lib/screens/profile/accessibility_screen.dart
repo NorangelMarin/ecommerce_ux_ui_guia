@@ -10,7 +10,7 @@ import '../../theme/app_colors.dart';
 import '../../providers/accessibility_provider.dart';
 import '../../providers/auth_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import '../../widgets/guide_wrapper.dart';
 class AccessibilityScreen extends ConsumerWidget {
   AccessibilityScreen({super.key});
 
@@ -46,21 +46,32 @@ class AccessibilityScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'disena_tu_experiencia_visual'.tr(),
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: AppColors.of(context).textoPrincipal,
-              ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'personaliza_el_entorno_de'.tr(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.of(context).sombras,
-                height: 1.4,
-                fontSize: 13,
+            GuideWrapper(
+              id: 'accessibility_title',
+              title: 'Accesibilidad',
+              description: 'Integrar opciones de accesibilidad desde el inicio del diseño asegura que la app sea usable por una audiencia más amplia, cumpliendo con principios de diseño inclusivo.',
+              alignment: Alignment.bottomRight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'disena_tu_experiencia_visual'.tr(),
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: AppColors.of(context).textoPrincipal,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'personaliza_el_entorno_de'.tr(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.of(context).sombras,
+                      height: 1.4,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 32),

@@ -126,45 +126,91 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
 
             // Banner de Pedido Pendiente (si existe)
-            if (userOrdersAsync.value != null)
-              ...userOrdersAsync.value!
-                  .where((o) => o.status == 'En proceso')
-                  .take(1)
-                  .map((order) => Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: Container(
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.of(context).fondoTarjetas,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
-                              SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Tienes un pedido pendiente', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
-                                    Text('Orden ${order.id.length > 6 ? order.id.substring(0, 6).toUpperCase() : order.id}', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
-                                  ],
-                                ),
-                              ),
-                              OutlinedButton(
-                                onPressed: () => context.push('/order_status/${order.id}'),
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: AppColors.of(context).naranjaUnimet),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                ),
-                                child: Text('Ver Estado', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12)),
-                              ),
-                            ],
-                          ),
+            if (userOrdersAsync.value != null) ...[
+              Builder(
+                builder: (context) {
+                  final activeOrders = userOrdersAsync.value!
+                      .where((o) => ['Pago confirmado', 'En preparación', 'Enviado'].contains(o.status))
+                      .toList();
+                  if (activeOrders.isEmpty) return SizedBox.shrink();
+
+                  if (activeOrders.length == 1) {
+                    final order = activeOrders.first;
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.of(context).fondoTarjetas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
                         ),
-                      )),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tienes un pedido pendiente', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
+                                  Text('Orden ${order.id.length > 6 ? order.id.substring(0, 6).toUpperCase() : order.id}', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () => context.push('/order_status/${order.id}'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                              child: Text('Ver Estado', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.of(context).fondoTarjetas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tienes ${activeOrders.length} pedidos pendientes', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
+                                  Text('Órdenes en proceso', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () => context.push('/history'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                              child: Text('Ver Todos', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
 
             // Título de Categorías Destacadas
             Padding(
@@ -200,6 +246,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onTap: () =>
                               context.push('/catalog', extra: 'Laptops'),
                           child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
                             decoration: BoxDecoration(
                               color: AppColors.of(context).verdeSaman,
                               borderRadius: BorderRadius.circular(12),
@@ -314,10 +362,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GuideWrapper(
+                    id: 'home_productos_destacados',
                     title: 'productos_destacados'.tr(),
-                    description:
-                        'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
-                    alignment: Alignment.topRight,
+                    description: 'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
+                    alignment: Alignment.bottomRight,
                     child: Text('productos_destacados'.tr(),
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -375,7 +423,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = featuredProducts[index];
-                      return ProductCard(
+                      Widget card = ProductCard(
                         type: CardType.vertical,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -383,9 +431,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         imageUrl: product.imageUrl,
                         discount: product.discount,
                         isFavorite: wishlistIds.contains(product.id),
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onCartPressed: () {
                           ref
                               .read(cartProvider.notifier)
@@ -406,7 +458,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
+                        showTooltip: index == 0,
                       );
+                      
+                      return card;
                     },
                   );
                 },
@@ -422,10 +477,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: GuideWrapper(
+                  id: 'home_ofertas_especiales',
                   title: 'ofertas_especiales_aversión_a_la'.tr(),
-                  description:
-                      'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
-                  alignment: Alignment.topRight,
+                  description: 'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
+                  alignment: Alignment.bottomRight,
                   child: Text('ofertas_especiales'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -475,7 +530,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = offerProducts[index];
-                      return ProductCard(
+                      Widget card = ProductCard(
                         type: CardType.horizontal,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -483,12 +538,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         imageUrl: product.imageUrl,
                         discount: product.discount,
                         isFavorite: wishlistIds.contains(product.id),
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
+                        showTooltip: index == 0,
                       );
+                      
+                      return card;
                     },
                   );
                 },

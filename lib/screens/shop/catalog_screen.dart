@@ -363,15 +363,21 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         size: 20,
                       ),
                       suffixIcon: accessState.voiceSearch
-                          ? IconButton(
-                              icon: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
-                                color: _isListening
-                                    ? Colors.red
-                                    : AppColors.of(context).naranjaUnimet,
-                                size: 20,
+                          ? GuideWrapper(
+                              id: 'catalog_voice_search',
+                              title: 'Búsqueda por Voz y Texto',
+                              description: 'Usa el micrófono para buscar por voz o escribe características del producto para encontrar lo que necesitas rápidamente.',
+                              alignment: Alignment.bottomRight,
+                              child: IconButton(
+                                icon: Icon(
+                                  _isListening ? Icons.mic : Icons.mic_none,
+                                  color: _isListening
+                                      ? Colors.red
+                                      : AppColors.of(context).naranjaUnimet,
+                                  size: 20,
+                                ),
+                                onPressed: _listen,
                               ),
-                              onPressed: _listen,
                             )
                           : null,
                       contentPadding: EdgeInsets.symmetric(
@@ -483,17 +489,23 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
-                child: Text(
-                  _searchQuery.isNotEmpty
-                      ? '${'resultados_de'.tr()}"$_searchQuery"'
-                      : _selectedCategory != null
-                      ? '${'categora'.tr()}: $_selectedCategory'
-                      : 'todos_los_productos'.tr(),
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.of(context).textoPrincipal,
-                    fontSize: 20,
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: GuideWrapper(
+                  id: 'catalog_product_card',
+                  title: 'Tarjeta de Producto',
+                  description: 'Toca el producto para ver más detalles o añádelo directamente a tu lista de deseos o al carrito.',
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    _searchQuery.isNotEmpty
+                        ? '${'resultados_de'.tr()}"$_searchQuery"'
+                        : _selectedCategory != null
+                        ? '${'categora'.tr()}: $_selectedCategory'
+                        : 'todos_los_productos'.tr(),
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.of(context).textoPrincipal,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
               ),
@@ -544,17 +556,23 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text(
-                        productsAsync.hasValue
-                            ? (_searchQuery.isNotEmpty
-                                  ? '${'mostrando_resultados_de'.tr()}"$_searchQuery"'
-                                  : _selectedCategory != null
-                                  ? '${'mostrando_resultados_de'.tr()}"$_selectedCategory"'
-                                  : 'mostrando_todos_los_articulos'.tr())
-                            : 'cargando_artculos'.tr(),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.of(context).sombras,
-                          height: 1.2,
+                      child: GuideWrapper(
+                        id: 'catalog_product_card',
+                        title: 'Tarjeta de Producto',
+                        description: 'Los elementos de cada producto están agrupados para facilitar el escaneo visual. El área interactiva abarca toda la tarjeta para evitar toques fallidos.',
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          productsAsync.hasValue
+                              ? (_searchQuery.isNotEmpty
+                                    ? '${'mostrando_resultados_de'.tr()}"$_searchQuery"'
+                                    : _selectedCategory != null
+                                    ? '${'mostrando_resultados_de'.tr()}"$_selectedCategory"'
+                                    : 'mostrando_todos_los_articulos'.tr())
+                              : 'cargando_artculos'.tr(),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.of(context).sombras,
+                            height: 1.2,
+                          ),
                         ),
                       ),
                     ),
@@ -573,7 +591,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                             child: IconButton(
                               icon: Icon(
                                 Icons.tune,
-                                color: AppColors.of(context).blanco,
+                                color: Colors.white,
                                 size: 20,
                               ),
                               onPressed: () =>
@@ -595,7 +613,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                             child: IconButton(
                               icon: Icon(
                                 Icons.sort,
-                                color: AppColors.of(context).blanco,
+                                color: Colors.white,
                                 size: 20,
                               ),
                               onPressed: _showSortModal,
@@ -694,7 +712,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     }
 
                     return GridView.builder(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                      padding: EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 16),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisExtent: 236,
@@ -707,7 +725,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         final displayCategory = resolvedCategoryName(
                           product.categories,
                         );
-                        return ProductCard(
+                        final card = ProductCard(
                           type: CardType.vertical,
                           title: product.title,
                           price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -715,9 +733,13 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                           imageUrl: product.imageUrl,
                           discount: product.discount,
                           isFavorite: wishlistIds.contains(product.id),
-                          onFavoritePressed: () => ref
-                              .read(wishlistProvider.notifier)
-                              .toggleProduct(product.id),
+                          onFavoritePressed: () {
+                            final isAdding = !wishlistIds.contains(product.id);
+                            ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                            if (isAdding) {
+                              CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                            }
+                          },
                           onCartPressed: () {
                             ref
                                 .read(cartProvider.notifier)
@@ -741,6 +763,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                           onTap: () =>
                               context.push('/product_detail/${product.id}'),
                         );
+                        return card;
                       },
                     );
                   },

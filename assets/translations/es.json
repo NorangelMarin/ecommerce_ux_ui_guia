@@ -233,7 +233,8 @@
   "canales_de_comunicacin": "Canales de comunicación",
   "consulta_nuestra_seccin_de_preguntas_fre": "Consulta nuestra sección de preguntas frecuentes y encuentra soluciones rápidas a problemas comunes.",
   "encuesta_de_satisfaccin": "Encuesta de satisfacción",
-  "tu_pedido_ha_sidonentregado": "¡Tu pedido ha sido\\nentregado!",
+  "tu_pedido_ha_sido_entregado": "¡Tu pedido ha sido entregado!",
+  "el_nmero_de_telfono_debe_tener_7": "El número de teléfono debe tener 7 dígitos.",
   "han_confirmado_la_recepcin_del_pedido": "Han confirmado la recepción del pedido",
   "reconocimiento_de_voz_no_disponible_o_pe": "Reconocimiento de voz no disponible o permisos denegados.",
   "ordenar_por": "Ordenar por",
@@ -310,7 +311,7 @@
   "modo_guia_on": "Modo guía ON",
   "modo_guia_off": "Modo guía OFF",
   "basado_en_resenas": "Basado en {} reseña {}",
-  "anadido_al_carrito": " añadido al carrito",
+  "anadido_al_carrito": "añadido al carrito",
   "proceder_al_pago": "Proceder al pago",
   "seguir_comprando": "Seguir comprando",
   "procesando": "Procesando...",
@@ -343,5 +344,7 @@
   "precio_total": "Precio total:",
   "seleccione_una_dirección": "Seleccione una dirección",
   "orden": "Orden:",
-  "categorias_destacadas": "Categorías más buscadas"
+  "categorias_destacadas": "Categorías más buscadas",
+  "accesorios": "Accesorios",
+  "en_proceso": "En proceso"
 }

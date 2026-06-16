@@ -358,16 +358,22 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
-            child: Text(
-              _searchQuery.isNotEmpty
-                  ? '${'resultados_de'.tr()}"$_searchQuery"'
-                  : _selectedCategory != null
-                  ? '${'categora'.tr()}: $_selectedCategory'
-                  : 'tus_productos_favoritos'.tr(),
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.of(context).textoPrincipal,
-                fontSize: 20,
+            child: GuideWrapper(
+              id: 'wishlist_title',
+              title: 'Artículos Guardados',
+              description: 'Los productos que te interesan se guardan aquí. Puedes añadirlos directamente al carrito o removerlos tocando el ícono de corazón.',
+              alignment: Alignment.bottomRight,
+              child: Text(
+                _searchQuery.isNotEmpty
+                    ? '${'resultados_de'.tr()}"$_searchQuery"'
+                    : _selectedCategory != null
+                    ? '${'categora'.tr()}: $_selectedCategory'
+                    : 'tus_productos_favoritos'.tr(),
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.of(context).textoPrincipal,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
@@ -450,7 +456,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.tune,
-                          color: AppColors.of(context).blanco,
+                          color: Colors.white,
                           size: 20,
                         ),
                         onPressed: () =>
@@ -472,7 +478,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.sort,
-                          color: AppColors.of(context).blanco,
+                          color: Colors.white,
                           size: 20,
                         ),
                         onPressed: _showSortModal,
@@ -531,16 +537,20 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                     itemCount: wishlistProducts.length,
                     itemBuilder: (context, index) {
                       final product = wishlistProducts[index];
-                      return ProductCard(
+                      final card = ProductCard(
                         type: CardType.vertical,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
                         category: resolvedCategoryName(product.categories),
                         imageUrl: product.imageUrl,
                         isFavorite: true,
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onCartPressed: () {
                           ref
                               .read(cartProvider.notifier)
@@ -562,6 +572,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
                       );
+                      return card;
                     },
                   ),
           ),

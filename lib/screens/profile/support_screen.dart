@@ -79,6 +79,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
             // Gestión de pedidos
             GuideWrapper(
+              id: 'support_policies',
               title: 'divulgación_progresiva'.tr(),
               description: 'Utilizar un diseño de acordeón para las políticas extensas evita la sobrecarga visual. El usuario solo lee lo que necesita cuando lo necesita.',
               child: Column(
@@ -119,6 +120,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
             // Canales de comunicación
             GuideWrapper(
+              id: 'support_channels',
               title: 'confianza_y_accesibilidad'.tr(),
               description: 'Mostrar canales de contacto directos (WhatsApp y Llamada) con tiempos de respuesta o disponibilidad (ej: 8am - 5pm) reduce la ansiedad del usuario y genera confianza en la plataforma.',
               child: Column(
@@ -178,6 +180,7 @@ class _SupportScreenState extends State<SupportScreen> {
             SizedBox(height: 32),
 
             GuideWrapper(
+              id: 'support_faq',
               title: 'autoservicio_proactivo'.tr(),
               description: 'Destacar visualmente las Preguntas Frecuentes empodera a los usuarios a encontrar respuestas por sí mismos y disminuye drásticamente el volumen de tickets de soporte.',
               child: Container(
