@@ -72,29 +72,24 @@ class AddressesScreen extends ConsumerWidget {
                   );
                 }
                 return Column(
-                  children: addresses
-                      .asMap()
-                      .entries
-                      .map(
-                        (entry) {
-                          final index = entry.key;
-                          final addr = entry.value;
-                          final card = Padding(
-                            padding: EdgeInsets.only(bottom: 16),
-                            child: _buildAddressCard(context, ref, addr),
-                          );
-                          if (index == 0) {
-                            return GuideWrapper(
-                              id: 'addresses_first_item',
-                              title: 'Dirección Guardada',
-                              description: 'Permitir al usuario gestionar múltiples direcciones reduce drásticamente la fricción durante el checkout. Al almacenar esta información de forma segura, se minimiza el abandono del carrito causado por formularios extensos.',
-                              child: card,
-                            );
-                          }
-                          return card;
-                        },
-                      )
-                      .toList(),
+                  children: addresses.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final addr = entry.value;
+                    final card = Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: _buildAddressCard(context, ref, addr),
+                    );
+                    if (index == 0) {
+                      return GuideWrapper(
+                        id: 'addresses_first_item',
+                        title: 'Dirección Guardada',
+                        description:
+                            'Permitir al usuario gestionar múltiples direcciones reduce drásticamente la fricción durante el checkout. Al almacenar esta información de forma segura, se minimiza el abandono del carrito causado por formularios extensos.',
+                        child: card,
+                      );
+                    }
+                    return card;
+                  }).toList(),
                 );
               },
             ),
@@ -150,7 +145,9 @@ class AddressesScreen extends ConsumerWidget {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.1),
+                  color: AppColors.of(
+                    context,
+                  ).naranjaUnimet.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -180,104 +177,216 @@ class AddressesScreen extends ConsumerWidget {
     final badgeColor = _getBadgeColor(context, addr.labelColor);
 
     return Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppColors.of(context).blanco,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.of(context).blanco,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: badgeColor,
-                      borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: badgeColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    addr.label,
+                    style: TextStyle(
+                      color: AppColors.of(context).blanco,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: Text(
-                      addr.label,
-                      style: TextStyle(
-                        color: AppColors.of(context).blanco,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: AppColors.of(context).azulSistemas,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        context.push('/add_address', extra: addr);
-                      },
-                      constraints: BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                    ),
-                    SizedBox(width: 12),
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                      onPressed: () async {
-                        final user = ref.read(authStateProvider).value;
-                        if (user != null) {
-                          await ref
-                              .read(addressRepositoryProvider)
-                              .deleteAddress(user.uid, addr.id);
-                        }
-                      }, // Acción eliminar
-                      constraints: BoxConstraints(),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-
-            // Tipo de dirección
-            Text(
-              'direccin_de_envo'.tr(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-                color: AppColors.of(context).textoPrincipal,
               ),
-            ),
-            SizedBox(height: 10),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: AppColors.of(context).azulSistemas,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      context.push('/add_address', extra: addr);
+                    },
+                    constraints: BoxConstraints(),
+                    padding: EdgeInsets.zero,
+                  ),
+                  SizedBox(width: 12),
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: AppColors.of(context).blanco,
+                          child: Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withValues(alpha: 0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.warning_rounded,
+                                    color: Colors.red,
+                                    size: 32,
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  '${'eliminar'.tr()} ${'direccin_de_envo'.tr().toLowerCase()}',
+                                  style: theme.textTheme.displayMedium
+                                      ?.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.of(
+                                          context,
+                                        ).textoPrincipal,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Esta acción no se puede deshacer.',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.of(context).sombras,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 24),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: () => Navigator.pop(ctx),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: AppColors.of(
+                                            context,
+                                          ).sombras,
+                                          side: BorderSide(
+                                            color: AppColors.of(
+                                              context,
+                                            ).sombras.withValues(alpha: 0.2),
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text('cancelar'.tr()),
+                                      ),
+                                    ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.pop(ctx);
+                                          final user = ref
+                                              .read(authStateProvider)
+                                              .value;
+                                          if (user != null) {
+                                            await ref
+                                                .read(addressRepositoryProvider)
+                                                .deleteAddress(
+                                                  user.uid,
+                                                  addr.id,
+                                                );
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text('eliminar'.tr()),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }, // Acción eliminar
+                    constraints: BoxConstraints(),
+                    padding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
 
-            // Datos de dirección
-            _buildAddressRow(context, theme, 'Estado:', addr.estado),
-            _buildAddressRow(context, theme, 'Ciudad:', addr.ciudad),
-            _buildAddressRow(context, theme, 'Municipio:', addr.municipio),
-            _buildAddressRow(context, theme, 'Ubicación detallada:', addr.urbanizacion),
-          ],
-        ),
+          // Tipo de dirección
+          Text(
+            'direccin_de_envo'.tr(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              color: AppColors.of(context).textoPrincipal,
+            ),
+          ),
+          SizedBox(height: 10),
+
+          // Datos de dirección
+          _buildAddressRow(context, theme, 'Estado:', addr.estado),
+          _buildAddressRow(context, theme, 'Ciudad:', addr.ciudad),
+          _buildAddressRow(context, theme, 'Municipio:', addr.municipio),
+          _buildAddressRow(
+            context,
+            theme,
+            'Ubicación detallada:',
+            addr.urbanizacion,
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildAddressRow(BuildContext context, ThemeData theme, String label, String value) {
+  Widget _buildAddressRow(
+    BuildContext context,
+    ThemeData theme,
+    String label,
+    String value,
+  ) {
     return Padding(
       padding: EdgeInsets.only(bottom: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Flexible(
-            flex: 2,
+            flex: 3,
             child: Text(
               label,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -291,7 +400,7 @@ class AddressesScreen extends ConsumerWidget {
           ),
           SizedBox(width: 4),
           Expanded(
-            flex: 5,
+            flex: 4,
             child: Text(
               value,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -319,7 +428,9 @@ class AddressesScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           color: AppColors.of(context).blanco,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
@@ -389,7 +500,9 @@ class AddressesScreen extends ConsumerWidget {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => Center(
-        child: CircularProgressIndicator(color: AppColors.of(context).naranjaUnimet),
+        child: CircularProgressIndicator(
+          color: AppColors.of(context).naranjaUnimet,
+        ),
       ),
     );
 
@@ -450,7 +563,11 @@ class AddressesScreen extends ConsumerWidget {
     } catch (e) {
       if (!context.mounted) return;
       Navigator.pop(context); // Cerrar loading
-      CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
+      CustomNotification.show(
+        context,
+        message: 'error_general'.tr(args: [e.toString()]),
+        type: NotificationType.error,
+      );
     }
   }
 
@@ -476,9 +593,9 @@ class AddressesScreen extends ConsumerWidget {
             children: [
               Text(
                 'direccin'.tr(),
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.of(context).sombras,
+                ),
               ),
               SizedBox(height: 4),
               Text(
@@ -537,7 +654,11 @@ class AddressesScreen extends ConsumerWidget {
                 }
                 if (ctx.mounted) {
                   Navigator.pop(ctx);
-                  CustomNotification.show(context, message: 'dirección_guardada_correctamente'.tr(), type: NotificationType.info);
+                  CustomNotification.show(
+                    context,
+                    message: 'dirección_guardada_correctamente'.tr(),
+                    type: NotificationType.info,
+                  );
                 }
               },
               child: Text('guardar'.tr()),

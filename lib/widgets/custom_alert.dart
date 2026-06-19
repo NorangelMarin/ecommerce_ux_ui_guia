@@ -19,7 +19,7 @@ class CustomAlert extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Color backgroundColor;
     Color iconColor;
     IconData iconData;
@@ -27,19 +27,21 @@ class CustomAlert extends StatelessWidget {
 
     switch (type) {
       case AlertType.exito:
-        backgroundColor = AppColors.of(context).exito.withOpacity(0.1);
+        backgroundColor = AppColors.of(context).exito.withValues(alpha: 0.1);
         iconColor = AppColors.of(context).exito;
         iconData = Icons.check_circle;
         defaultText = '¡Buen Trabajo!';
         break;
       case AlertType.advertencia:
-        backgroundColor = AppColors.of(context).advertencia.withOpacity(0.1);
+        backgroundColor = AppColors.of(
+          context,
+        ).advertencia.withValues(alpha: 0.1);
         iconColor = AppColors.of(context).advertencia;
         iconData = Icons.warning_rounded;
         defaultText = '¡Ojo!';
         break;
       case AlertType.error:
-        backgroundColor = AppColors.of(context).error.withOpacity(0.1);
+        backgroundColor = AppColors.of(context).error.withValues(alpha: 0.1);
         iconColor = AppColors.of(context).error;
         iconData = Icons.error;
         defaultText = 'Oops...';

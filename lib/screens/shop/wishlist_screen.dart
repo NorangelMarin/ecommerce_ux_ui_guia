@@ -56,7 +56,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
             if (mounted) setState(() => _isListening = false);
           }
         },
-        onError: (val) => print('onError: $val'),
+        onError: (val) => debugPrint('onError: $val'),
       );
       if (available) {
         if (mounted) setState(() => _isListening = true);

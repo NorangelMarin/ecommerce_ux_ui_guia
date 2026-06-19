@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class AuthRepository {
   final FirebaseAuth _auth;
@@ -14,7 +13,7 @@ class AuthRepository {
   Future<void> _createUserInFirestore(User user, {String? name}) async {
     final userRef = _firestore.collection('users').doc(user.uid);
     final docSnap = await userRef.get();
-    
+
     if (!docSnap.exists) {
       await userRef.set({
         'id': user.uid,
@@ -25,18 +24,23 @@ class AuthRepository {
         'createdAt': FieldValue.serverTimestamp(),
       });
     } else {
-      // Solo actualizamos campos si la auth de Firebase provee datos nuevos que no teníamos, 
+      // Solo actualizamos campos si la auth de Firebase provee datos nuevos que no teníamos,
       // o simplemente actualizamos el email por seguridad. No sobreescribir teléfono.
       final updates = <String, dynamic>{};
       if (user.email != null) updates['email'] = user.email;
-      if (name != null && name.isNotEmpty) updates['displayName'] = name;
-      else if (user.displayName != null && user.displayName!.isNotEmpty && (docSnap.data()?['displayName'] ?? '').isEmpty) {
+      if (name != null && name.isNotEmpty) {
+        updates['displayName'] = name;
+      } else if (user.displayName != null &&
+          user.displayName!.isNotEmpty &&
+          (docSnap.data()?['displayName'] ?? '').isEmpty) {
         updates['displayName'] = user.displayName;
       }
-      if (user.photoURL != null && user.photoURL!.isNotEmpty && (docSnap.data()?['photoUrl'] ?? '').isEmpty) {
+      if (user.photoURL != null &&
+          user.photoURL!.isNotEmpty &&
+          (docSnap.data()?['photoUrl'] ?? '').isEmpty) {
         updates['photoUrl'] = user.photoURL;
       }
-      
+
       if (updates.isNotEmpty) {
         await userRef.update(updates);
       }
@@ -50,11 +54,11 @@ class AuthRepository {
   Future<void> updateProfileData(String name, String phone) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuario no autenticado');
-    
+
     if (name.isNotEmpty && name != user.displayName) {
       await user.updateDisplayName(name);
     }
-    
+
     await _firestore.collection('users').doc(user.uid).set({
       'displayName': name,
       'phoneNumber': phone,
@@ -100,13 +104,26 @@ class AuthRepository {
     }
   }
 
-  Future<void> changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuario no autenticado');
-    if (user.email == null) throw Exception('El usuario no tiene un correo asignado o usa Google Sign-In');
+    if (user.email == null) {
+      throw 'El usuario no tiene un correo asignado o usa Google Sign-In';
+    }
+
+    final isGoogleSignIn = user.providerData.any((p) => p.providerId == 'google.com');
+    if (isGoogleSignIn) {
+      throw 'Los usuarios de Google deben cambiar su contraseña desde su cuenta de Google.';
+    }
 
     try {
-      final cred = EmailAuthProvider.credential(email: user.email!, password: currentPassword);
+      final cred = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
       await user.reauthenticateWithCredential(cred);
       await user.updatePassword(newPassword);
     } on FirebaseAuthException catch (e) {
@@ -121,7 +138,7 @@ class AuthRepository {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Usuario no autenticado');
     if (user.email == null) throw Exception('Usuario sin correo electrónico');
-    
+
     try {
       await _auth.sendPasswordResetEmail(email: user.email!);
     } on FirebaseAuthException catch (e) {
@@ -132,8 +149,8 @@ class AuthRepository {
   Future<UserCredential?> signInWithEmail(String email, String password) async {
     try {
       return await _auth.signInWithEmailAndPassword(
-        email: email, 
-        password: password
+        email: email,
+        password: password,
       );
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -142,15 +159,19 @@ class AuthRepository {
     }
   }
 
-  Future<UserCredential?> signUpWithEmail(String email, String password, String name) async {
+  Future<UserCredential?> signUpWithEmail(
+    String email,
+    String password,
+    String name,
+  ) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
-        email: email, 
-        password: password
+        email: email,
+        password: password,
       );
       // Actualizar el displayName con el nombre ingresado
       await credential.user?.updateDisplayName(name);
-      
+
       if (credential.user != null) {
         await _createUserInFirestore(credential.user!, name: name);
       }
@@ -164,14 +185,15 @@ class AuthRepository {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance
+          .authenticate();
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
       final userCredential = await _auth.signInWithCredential(credential);
-      
+
       if (userCredential.user != null) {
         await _createUserInFirestore(userCredential.user!);
       }

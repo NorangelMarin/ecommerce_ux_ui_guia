@@ -27,45 +27,70 @@ class CustomNotification {
         iconColor = Colors.amber;
         break;
       case NotificationType.info:
-      default:
         iconData = Icons.info;
         iconColor = Colors.blue.shade700;
         break;
     }
 
     final trimmedMessage = message.trim();
-    final formattedMessage = trimmedMessage.isNotEmpty 
-        ? '${trimmedMessage[0].toUpperCase()}${trimmedMessage.substring(1)}' 
+    final formattedMessage = trimmedMessage.isNotEmpty
+        ? '${trimmedMessage[0].toUpperCase()}${trimmedMessage.substring(1)}'
         : trimmedMessage;
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(iconData, color: iconColor, size: 28),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                formattedMessage,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (ctx) {
+        return Positioned(
+          bottom: 20.0 + MediaQuery.of(ctx).viewInsets.bottom,
+          left: 16.0,
+          right: 16.0,
+          child: SafeArea(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(iconData, color: iconColor, size: 28),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        formattedMessage,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
-        backgroundColor: Colors.grey[100], // Fondo gris claro según diseño
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 4,
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        duration: const Duration(seconds: 3),
-      ),
+          ),
+        );
+      },
     );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(const Duration(seconds: 3), () {
+      if (overlayEntry.mounted) {
+        overlayEntry.remove();
+      }
+    });
   }
 }

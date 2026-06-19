@@ -60,7 +60,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onActionPressed: () => context.push('/cart'),
         extraActions: [
           IconButton(
-            icon: Icon(Icons.search, color: AppColors.of(context).naranjaUnimet),
+            icon: Icon(
+              Icons.search,
+              color: AppColors.of(context).naranjaUnimet,
+            ),
             onPressed: () => context.push('/catalog'),
           ),
         ],
@@ -79,7 +82,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('bienvenido'.tr(),
+                      Text(
+                        'bienvenido'.tr(),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.of(context).sombras,
                         ),
@@ -99,7 +103,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        isGuideMode ? 'modo_guia_on'.tr() : 'modo_guia_off'.tr(),
+                        isGuideMode
+                            ? 'modo_guia_on'.tr()
+                            : 'modo_guia_off'.tr(),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColors.of(context).sombras,
                           fontWeight: FontWeight.w600,
@@ -110,11 +116,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Switch(
                         value: isGuideMode,
                         activeThumbColor: AppColors.of(context).naranjaUnimet,
-                        activeTrackColor: AppColors.of(context).naranjaUnimet.withOpacity(
-                          0.3,
-                        ),
-                        inactiveThumbColor: AppColors.of(context).sombras.withOpacity(0.5),
-                        inactiveTrackColor: AppColors.of(context).sombras.withOpacity(0.15),
+                        activeTrackColor: AppColors.of(
+                          context,
+                        ).naranjaUnimet.withValues(alpha: 0.3),
+                        inactiveThumbColor: AppColors.of(
+                          context,
+                        ).sombras.withValues(alpha: 0.5),
+                        inactiveTrackColor: AppColors.of(
+                          context,
+                        ).sombras.withValues(alpha: 0.15),
                         onChanged: (value) {
                           ref.read(guideProvider.notifier).toggle();
                         },
@@ -130,81 +140,164 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Builder(
                 builder: (context) {
                   final activeOrders = userOrdersAsync.value!
-                      .where((o) => ['Pago confirmado', 'En preparación', 'Enviado'].contains(o.status))
+                      .where(
+                        (o) => [
+                          'Pago confirmado',
+                          'En preparación',
+                          'Enviado',
+                        ].contains(o.status),
+                      )
                       .toList();
                   if (activeOrders.isEmpty) return SizedBox.shrink();
 
                   if (activeOrders.length == 1) {
                     final order = activeOrders.first;
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: GuideWrapper(
+                        title: 'Prevención de ansiedad y visibilidad del estado',
+                        description: 'Mostrar un acceso directo al estado del pedido actual (o al historial si hay múltiples) mantiene al usuario informado, previene la ansiedad post-compra y reduce la carga cognitiva.',
+                        child: Container(
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: AppColors.of(context).fondoTarjetas,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: AppColors.of(
+                              context,
+                            ).naranjaUnimet.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            Icon(
+                              Icons.access_time_filled,
+                              color: AppColors.of(context).naranjaUnimet,
+                            ),
                             SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Tienes un pedido pendiente', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
-                                  Text('Orden ${order.id.length > 6 ? order.id.substring(0, 6).toUpperCase() : order.id}', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                  Text(
+                                    'Tienes un pedido pendiente',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.of(
+                                        context,
+                                      ).textoPrincipal,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Orden ${order.id.length > 6 ? order.id.substring(0, 6).toUpperCase() : order.id}',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.of(context).sombras,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             OutlinedButton(
-                              onPressed: () => context.push('/order_status/${order.id}'),
+                              onPressed: () =>
+                                  context.push('/order_status/${order.id}'),
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                side: BorderSide(
+                                  color: AppColors.of(context).naranjaUnimet,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 padding: EdgeInsets.symmetric(horizontal: 12),
                               ),
-                              child: Text('Ver Estado', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text(
+                                'Ver Estado',
+                                style: TextStyle(
+                                  color: AppColors.of(context).naranjaUnimet,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      ),
                     );
                   } else {
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: GuideWrapper(
+                        title: 'Prevención de ansiedad y visibilidad del estado',
+                        description: 'Mostrar un acceso directo al historial cuando hay múltiples pedidos mantiene al usuario informado, previene la ansiedad post-compra y centraliza la información importante.',
+                        child: Container(
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: AppColors.of(context).fondoTarjetas,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: AppColors.of(
+                              context,
+                            ).naranjaUnimet.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            Icon(
+                              Icons.access_time_filled,
+                              color: AppColors.of(context).naranjaUnimet,
+                            ),
                             SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Tienes ${activeOrders.length} pedidos pendientes', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
-                                  Text('Órdenes en proceso', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                  Text(
+                                    'Tienes ${activeOrders.length} pedidos pendientes',
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.of(
+                                        context,
+                                      ).textoPrincipal,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Órdenes en proceso',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.of(context).sombras,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             OutlinedButton(
                               onPressed: () => context.push('/history'),
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                side: BorderSide(
+                                  color: AppColors.of(context).naranjaUnimet,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 padding: EdgeInsets.symmetric(horizontal: 12),
                               ),
-                              child: Text('Ver Todos', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                              child: Text(
+                                'Ver Todos',
+                                style: TextStyle(
+                                  color: AppColors.of(context).naranjaUnimet,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
+                      ),
                       ),
                     );
                   }
@@ -220,8 +313,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: GuideWrapper(
                   id: 'home_categorias_destacadas',
                   title: 'Categorías Destacadas',
-                  description: 'Agrupar productos en categorías claramente definidas ayuda al usuario a encontrar lo que busca más rápido, reduciendo la carga cognitiva.',
-                  child: Text('categorias_destacadas'.tr(),
+                  description:
+                      'Agrupar productos en categorías claramente definidas ayuda al usuario a encontrar lo que busca más rápido, reduciendo la carga cognitiva.',
+                  child: Text(
+                    'categorias_destacadas'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.of(context).textoPrincipal,
@@ -266,7 +361,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   color: Colors.white,
                                   size: 36,
                                 ), // Categoría real
-                                Text('laptops'.tr(),
+                                Text(
+                                  'laptops'.tr(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -304,7 +400,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         size: 24,
                                       ), // Categoría real
                                       SizedBox(width: 8),
-                                      Text('celulares'.tr(),
+                                      Text(
+                                        'celulares'.tr(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -336,7 +433,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         size: 24,
                                       ), // Categoría real
                                       SizedBox(width: 8),
-                                      Text('audio'.tr(),
+                                      Text(
+                                        'audio'.tr(),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -368,8 +466,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   GuideWrapper(
                     id: 'home_productos_destacados',
                     title: 'productos_destacados'.tr(),
-                    description: 'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
-                    child: Text('productos_destacados'.tr(),
+                    description:
+                        'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
+                    child: Text(
+                      'productos_destacados'.tr(),
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.of(context).textoPrincipal,
@@ -379,7 +479,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () => context.push('/catalog'),
-                    child: Text('ver_todo'.tr(),
+                    child: Text(
+                      'ver_todo'.tr(),
                       style: TextStyle(
                         color: AppColors.of(context).naranjaUnimet,
                         fontWeight: FontWeight.bold,
@@ -400,7 +501,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 error: (err, stack) => Center(
-                  child: Text('error_general'.tr(args: [err.toString()]), style: TextStyle(color: Colors.red),
+                  child: Text(
+                    'error_general'.tr(args: [err.toString()]),
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
                 data: (products) {
@@ -410,7 +513,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   if (featuredProducts.isEmpty) {
                     return Center(
-                      child: Text('aade_productos_destacados'.tr(),
+                      child: Text(
+                        'aade_productos_destacados'.tr(),
                         style: TextStyle(color: AppColors.of(context).sombras),
                       ),
                     );
@@ -422,8 +526,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     itemCount: featuredProducts.length > 4
                         ? 4
                         : featuredProducts.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(width: 16),
+                    separatorBuilder: (context, index) => SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = featuredProducts[index];
                       Widget card = ProductCard(
@@ -436,9 +539,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         isFavorite: wishlistIds.contains(product.id),
                         onFavoritePressed: () {
                           final isAdding = !wishlistIds.contains(product.id);
-                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          ref
+                              .read(wishlistProvider.notifier)
+                              .toggleProduct(product.id);
                           if (isAdding) {
-                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                            CustomNotification.show(
+                              context,
+                              message: '${product.title} añadido a favoritos',
+                              type: NotificationType.success,
+                            );
                           }
                         },
                         onCartPressed: () {
@@ -457,13 +566,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       : 0.0,
                                 ),
                               );
-                          CustomNotification.show(context, message: '${product.title} añadido al carrito', type: NotificationType.success);
+                          CustomNotification.show(
+                            context,
+                            message: '${product.title} añadido al carrito',
+                            type: NotificationType.success,
+                          );
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
                         showTooltip: index == 0,
                       );
-                      
+
                       return card;
                     },
                   );
@@ -482,8 +595,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: GuideWrapper(
                   id: 'home_ofertas_especiales',
                   title: 'ofertas_especiales_aversión_a_la'.tr(),
-                  description: 'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
-                  child: Text('ofertas_especiales'.tr(),
+                  description:
+                      'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
+                  child: Text(
+                    'ofertas_especiales'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.of(context).textoPrincipal,
@@ -503,7 +618,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 error: (err, stack) => Center(
-                  child: Text('error_general'.tr(args: [err.toString()]), style: TextStyle(color: Colors.red),
+                  child: Text(
+                    'error_general'.tr(args: [err.toString()]),
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
                 data: (products) {
@@ -516,7 +633,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   if (offerProducts.isEmpty) {
                     return Center(
-                      child: Text('aade_productos_con_descuento'.tr(),
+                      child: Text(
+                        'aade_productos_con_descuento'.tr(),
                         style: TextStyle(color: AppColors.of(context).sombras),
                       ),
                     );
@@ -528,8 +646,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     itemCount: offerProducts.length > 3
                         ? 3
                         : offerProducts.length,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(width: 16),
+                    separatorBuilder: (context, index) => SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = offerProducts[index];
                       Widget card = ProductCard(
@@ -542,16 +659,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         isFavorite: wishlistIds.contains(product.id),
                         onFavoritePressed: () {
                           final isAdding = !wishlistIds.contains(product.id);
-                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          ref
+                              .read(wishlistProvider.notifier)
+                              .toggleProduct(product.id);
                           if (isAdding) {
-                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                            CustomNotification.show(
+                              context,
+                              message: '${product.title} añadido a favoritos',
+                              type: NotificationType.success,
+                            );
                           }
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
                         showTooltip: index == 0,
                       );
-                      
+
                       return card;
                     },
                   );

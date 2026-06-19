@@ -29,7 +29,10 @@ class GuideWrapper extends ConsumerWidget {
       ),
       builder: (context) => Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 24,
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom +
+              MediaQuery.of(context).padding.bottom +
+              24,
           top: 24,
           left: 24,
           right: 24,
@@ -43,10 +46,16 @@ class GuideWrapper extends ConsumerWidget {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.of(context).naranjaUnimet.withOpacity(0.1),
+                    color: AppColors.of(
+                      context,
+                    ).naranjaUnimet.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.tips_and_updates, color: AppColors.of(context).naranjaUnimet, size: 28),
+                  child: Icon(
+                    Icons.tips_and_updates,
+                    color: AppColors.of(context).naranjaUnimet,
+                    size: 28,
+                  ),
                 ),
                 SizedBox(width: 16),
                 Expanded(
@@ -84,7 +93,10 @@ class GuideWrapper extends ConsumerWidget {
                   ),
                   elevation: 0,
                 ),
-                child: Text('entendido'.tr(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(
+                  'entendido'.tr(),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
@@ -101,15 +113,38 @@ class GuideWrapper extends ConsumerWidget {
 
     // Calcular posiciones basadas en la alineación
     double? top, bottom, left, right;
-    if (alignment == Alignment.topLeft) { top = -8; left = -8; }
-    else if (alignment == Alignment.topRight) { top = -8; right = -8; }
-    else if (alignment == Alignment.bottomLeft) { bottom = -8; left = -8; }
-    else if (alignment == Alignment.bottomRight) { bottom = -8; right = -8; }
-    else if (alignment == Alignment.centerRight) { top = 0; bottom = 0; right = -8; }
-    else if (alignment == Alignment.centerLeft) { top = 0; bottom = 0; left = -8; }
-    else if (alignment == Alignment.topCenter) { top = -8; left = 0; right = 0; }
-    else if (alignment == Alignment.bottomCenter) { bottom = -8; left = 0; right = 0; }
-    else { top = -8; right = -8; } // Default topRight
+    if (alignment == Alignment.topLeft) {
+      top = -8;
+      left = -8;
+    } else if (alignment == Alignment.topRight) {
+      top = -8;
+      right = -8;
+    } else if (alignment == Alignment.bottomLeft) {
+      bottom = -8;
+      left = -8;
+    } else if (alignment == Alignment.bottomRight) {
+      bottom = -8;
+      right = -8;
+    } else if (alignment == Alignment.centerRight) {
+      top = 0;
+      bottom = 0;
+      right = -8;
+    } else if (alignment == Alignment.centerLeft) {
+      top = 0;
+      bottom = 0;
+      left = -8;
+    } else if (alignment == Alignment.topCenter) {
+      top = -8;
+      left = 0;
+      right = 0;
+    } else if (alignment == Alignment.bottomCenter) {
+      bottom = -8;
+      left = 0;
+      right = 0;
+    } else {
+      top = -8;
+      right = -8;
+    } // Default topRight
 
     return Stack(
       clipBehavior: Clip.none,

@@ -315,7 +315,10 @@ class OrderStatusScreen extends ConsumerWidget {
         st == 'enviado' ||
         st == 'entregado';
     final step2Active =
-        st == 'en preparación' || st == 'en preparacion' || st == 'enviado' || st == 'entregado';
+        st == 'en preparación' ||
+        st == 'en preparacion' ||
+        st == 'enviado' ||
+        st == 'entregado';
     final step3Active = st == 'enviado' || st == 'entregado';
     final step4Active = st == 'entregado';
 
@@ -484,40 +487,46 @@ class OrderStatusScreen extends ConsumerWidget {
               child: Stack(
                 children: [
                   // Obtenemos el brillo actual para decidir el estilo del mapa
-                  Builder(builder: (context) {
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    
-                    // Matriz para invertir colores (Modo Oscuro)
-                    const colorMatrixDark = <double>[
-                      -1,  0,  0, 0, 255, // Red
-                       0, -1,  0, 0, 255, // Green
-                       0,  0, -1, 0, 255, // Blue
-                       0,  0,  0, 1,   0, // Alpha
-                    ];
-                    
-                    return ColorFiltered(
-                      colorFilter: isDark 
-                          ? const ColorFilter.matrix(colorMatrixDark)
-                          // Modo monocromático (Escala de grises) para el tema claro
-                          : const ColorFilter.mode(Colors.grey, BlendMode.saturation),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.black : Colors.grey[200],
-                            image: DecorationImage(
-                              image: AssetImage(
-                                'assets/images/delivery_map_clean.png',
+                  Builder(
+                    builder: (context) {
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
+
+                      // Matriz para invertir colores (Modo Oscuro)
+                      const colorMatrixDark = <double>[
+                        -1, 0, 0, 0, 255, // Red
+                        0, -1, 0, 0, 255, // Green
+                        0, 0, -1, 0, 255, // Blue
+                        0, 0, 0, 1, 0, // Alpha
+                      ];
+
+                      return ColorFiltered(
+                        colorFilter: isDark
+                            ? const ColorFilter.matrix(colorMatrixDark)
+                            // Modo monocromático (Escala de grises) para el tema claro
+                            : const ColorFilter.mode(
+                                Colors.grey,
+                                BlendMode.saturation,
                               ),
-                              fit: BoxFit.cover,
-                              opacity: 0.8,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.black : Colors.grey[200],
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/delivery_map_clean.png',
+                                ),
+                                fit: BoxFit.cover,
+                                opacity: 0.8,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    },
+                  ),
                   // Marcador del repartidor animado (simulado)
                   Center(
                     child: TweenAnimationBuilder(
@@ -621,23 +630,5 @@ class OrderStatusScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _translateStatus(String status) {
-    switch (status.toLowerCase()) {
-      case 'en proceso':
-        return 'en_proceso'.tr();
-      case 'enviado':
-        return 'enviado'.tr();
-      case 'entregado':
-        return 'entregado'.tr();
-      case 'pago confirmado':
-        return 'pago_confirmado'.tr();
-      case 'en preparación':
-      case 'en preparacion':
-        return 'en_preparación'.tr();
-      default:
-        return status;
-    }
   }
 }

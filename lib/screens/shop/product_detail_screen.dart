@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,7 +47,9 @@ class ProductDetailScreen extends ConsumerWidget {
     if (productsAsync.isLoading) {
       return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(color: AppColors.of(context).naranjaUnimet),
+          child: CircularProgressIndicator(
+            color: AppColors.of(context).naranjaUnimet,
+          ),
         ),
       );
     }
@@ -70,7 +74,8 @@ class ProductDetailScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.of(context).fondoPrincipal,
       appBar: TopNavigationBar(
-        titleWidget: Text('detalle_del_producto'.tr(),
+        titleWidget: Text(
+          'detalle_del_producto'.tr(),
           style: theme.textTheme.displayMedium?.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -84,7 +89,11 @@ class ProductDetailScreen extends ConsumerWidget {
           final isAdding = !wishlistIds.contains(productId);
           ref.read(wishlistProvider.notifier).toggleProduct(productId);
           if (isAdding) {
-            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+            CustomNotification.show(
+              context,
+              message: '${product.title} añadido a favoritos',
+              type: NotificationType.success,
+            );
           }
         },
       ),
@@ -105,28 +114,30 @@ class ProductDetailScreen extends ConsumerWidget {
                           ? Image.asset(
                               product.imageUrl,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                color: AppColors.of(context).fondoTarjetas,
-                                child: Icon(
-                                  Icons.image,
-                                  size: 80,
-                                  color: AppColors.of(context).sombras,
-                                ),
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: AppColors.of(context).fondoTarjetas,
+                                    child: Icon(
+                                      Icons.image,
+                                      size: 80,
+                                      color: AppColors.of(context).sombras,
+                                    ),
+                                  ),
                             )
                           : Image.network(
                               product.imageUrl.isNotEmpty
                                   ? product.imageUrl
                                   : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                color: AppColors.of(context).fondoTarjetas,
-                                child: Icon(
-                                  Icons.image,
-                                  size: 80,
-                                  color: AppColors.of(context).sombras,
-                                ),
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: AppColors.of(context).fondoTarjetas,
+                                    child: Icon(
+                                      Icons.image,
+                                      size: 80,
+                                      color: AppColors.of(context).sombras,
+                                    ),
+                                  ),
                             ),
                     ),
                   ),
@@ -143,7 +154,8 @@ class ProductDetailScreen extends ConsumerWidget {
                       child: GuideWrapper(
                         id: 'detail_zoom',
                         title: 'Reducción de incertidumbre',
-                        description: 'Permitir visualizar el producto en detalle reduce la fricción en la decisión de compra, ya que compensa la imposibilidad física de examinar el producto.',
+                        description:
+                            'Permitir visualizar el producto en detalle reduce la fricción en la decisión de compra, ya que compensa la imposibilidad física de examinar el producto.',
                         child: IconButton(
                           icon: Icon(
                             Icons.zoom_in,
@@ -223,7 +235,8 @@ class ProductDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('descripcin'.tr(),
+                  Text(
+                    'descripcin'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       color: AppColors.of(context).azulSistemas,
                       fontWeight: FontWeight.bold,
@@ -272,7 +285,11 @@ class ProductDetailScreen extends ConsumerWidget {
                                 : 0.0,
                           ),
                         );
-                    CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
+                    CustomNotification.show(
+                      context,
+                      message: '${product.title} ${'anadido_al_carrito'.tr()}',
+                      type: NotificationType.success,
+                    );
                   },
                 ),
               ),
@@ -295,8 +312,10 @@ class ProductDetailScreen extends ConsumerWidget {
                     GuideWrapper(
                       id: 'product_detail_specs',
                       title: 'Transparencia de Información',
-                      description: 'Mostrar especificaciones técnicas completas y organizadas construye confianza y reduce la incertidumbre del usuario, lo que disminuye las devoluciones y aumenta la conversión.',
-                      child: Text('especificaciones_tcnicas'.tr(),
+                      description:
+                          'Mostrar especificaciones técnicas completas y organizadas construye confianza y reduce la incertidumbre del usuario, lo que disminuye las devoluciones y aumenta la conversión.',
+                      child: Text(
+                        'especificaciones_tcnicas'.tr(),
                         style: theme.textTheme.displayMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -310,20 +329,30 @@ class ProductDetailScreen extends ConsumerWidget {
                         entry,
                       ) {
                         final isLast = entry.key == product.specs.length - 1;
-                        return _buildSpecRow(context, 
+                        return _buildSpecRow(
+                          context,
                           entry.value.key,
                           entry.value.value,
                           isLast: isLast,
                         );
                       }),
                     ] else ...[
-                      _buildSpecRow(context, 'Categoría principal', getCategoryName(product.category)),
+                      _buildSpecRow(
+                        context,
+                        'Categoría principal',
+                        getCategoryName(product.category),
+                      ),
                       if (product.categories.length > 1)
-                        _buildSpecRow(context, 
+                        _buildSpecRow(
+                          context,
                           'otras_categorías'.tr(),
-                          product.categories.skip(1).map(getCategoryName).join(', '),
+                          product.categories
+                              .skip(1)
+                              .map(getCategoryName)
+                              .join(', '),
                         ),
-                      _buildSpecRow(context, 
+                      _buildSpecRow(
+                        context,
                         'ID de referencia',
                         product.id,
                         isLast: true,
@@ -349,8 +378,10 @@ class ProductDetailScreen extends ConsumerWidget {
                           GuideWrapper(
                             id: 'product_detail_reviews',
                             title: 'Social Proof (Prueba Social)',
-                            description: 'Las reseñas de otros usuarios son uno de los factores más influyentes en la decisión de compra. El "Social Proof" valida la calidad del producto y genera confianza instantánea.',
-                            child: Text('reseas'.tr(),
+                            description:
+                                'Las reseñas de otros usuarios son uno de los factores más influyentes en la decisión de compra. El "Social Proof" valida la calidad del producto y genera confianza instantánea.',
+                            child: Text(
+                              'reseas'.tr(),
                               style: theme.textTheme.displayMedium?.copyWith(
                                 color: AppColors.of(context).azulSistemas,
                                 fontWeight: FontWeight.bold,
@@ -385,7 +416,8 @@ class ProductDetailScreen extends ConsumerWidget {
                             size: 16,
                             color: AppColors.of(context).naranjaUnimet,
                           ),
-                          label: Text('escribir_resea'.tr(),
+                          label: Text(
+                            'escribir_resea'.tr(),
                             style: TextStyle(
                               color: AppColors.of(context).naranjaUnimet,
                               fontSize: 12,
@@ -406,7 +438,9 @@ class ProductDetailScreen extends ConsumerWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.of(context).verdeSaman.withValues(alpha: 0.12),
+                            color: AppColors.of(
+                              context,
+                            ).verdeSaman.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -417,7 +451,8 @@ class ProductDetailScreen extends ConsumerWidget {
                                 color: AppColors.of(context).verdeSaman,
                               ),
                               SizedBox(width: 4),
-                              Text('ya_reseaste'.tr(),
+                              Text(
+                                'ya_reseaste'.tr(),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: AppColors.of(context).verdeSaman,
@@ -458,21 +493,25 @@ class ProductDetailScreen extends ConsumerWidget {
                                     if (i < product.ratingPromedio.floor()) {
                                       return Icon(
                                         Icons.star,
-                                        color: AppColors.of(context).naranjaUnimet,
+                                        color: AppColors.of(
+                                          context,
+                                        ).naranjaUnimet,
                                         size: 18,
                                       );
                                     } else if (i < product.ratingPromedio) {
                                       return Icon(
                                         Icons.star_half,
-                                        color: AppColors.of(context).naranjaUnimet,
+                                        color: AppColors.of(
+                                          context,
+                                        ).naranjaUnimet,
                                         size: 18,
                                       );
                                     } else {
                                       return Icon(
                                         Icons.star_border,
-                                        color: AppColors.of(context).sombras.withValues(
-                                          alpha: 0.4,
-                                        ),
+                                        color: AppColors.of(
+                                          context,
+                                        ).sombras.withValues(alpha: 0.4),
                                         size: 18,
                                       );
                                     }
@@ -480,7 +519,12 @@ class ProductDetailScreen extends ConsumerWidget {
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  'basado_en_resenas'.tr(args: [product.totalResenas.toString(), product.totalResenas == 1 ? '' : 's']),
+                                  'basado_en_resenas'.tr(
+                                    args: [
+                                      product.totalResenas.toString(),
+                                      product.totalResenas == 1 ? '' : 's',
+                                    ],
+                                  ),
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: AppColors.of(context).sombras,
                                     fontSize: 11,
@@ -522,11 +566,14 @@ class ProductDetailScreen extends ConsumerWidget {
                             children: [
                               Icon(
                                 Icons.rate_review_outlined,
-                                color: AppColors.of(context).sombras.withValues(alpha: 0.5),
+                                color: AppColors.of(
+                                  context,
+                                ).sombras.withValues(alpha: 0.5),
                                 size: 28,
                               ),
                               SizedBox(width: 12),
-                              Text('an_no_hay_reseas_para_este_producto'.tr(),
+                              Text(
+                                'an_no_hay_reseas_para_este_producto'.tr(),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: AppColors.of(context).sombras,
                                   fontSize: 13,
@@ -557,12 +604,16 @@ class ProductDetailScreen extends ConsumerWidget {
                                             width: 40,
                                             height: 40,
                                             fit: BoxFit.cover,
-                                            errorBuilder: (_, __, ___) =>
-                                                _avatarFallback(context, 
+                                            errorBuilder: (_, _, _) =>
+                                                _avatarFallback(
+                                                  context,
                                                   review.userName,
                                                 ),
                                           )
-                                        : _avatarFallback(context, review.userName),
+                                        : _avatarFallback(
+                                            context,
+                                            review.userName,
+                                          ),
                                   ),
                                   SizedBox(width: 12),
                                   Expanded(
@@ -588,7 +639,9 @@ class ProductDetailScreen extends ConsumerWidget {
                                                 _formatDate(review.createdAt!),
                                                 style: theme.textTheme.bodySmall
                                                     ?.copyWith(
-                                                      color: AppColors.of(context).sombras,
+                                                      color: AppColors.of(
+                                                        context,
+                                                      ).sombras,
                                                       fontSize: 10,
                                                     ),
                                               ),
@@ -601,19 +654,24 @@ class ProductDetailScreen extends ConsumerWidget {
                                             if (i < review.rating.floor()) {
                                               return Icon(
                                                 Icons.star,
-                                                color: AppColors.of(context).naranjaUnimet,
+                                                color: AppColors.of(
+                                                  context,
+                                                ).naranjaUnimet,
                                                 size: 13,
                                               );
                                             } else if (i < review.rating) {
                                               return Icon(
                                                 Icons.star_half,
-                                                color: AppColors.of(context).naranjaUnimet,
+                                                color: AppColors.of(
+                                                  context,
+                                                ).naranjaUnimet,
                                                 size: 13,
                                               );
                                             } else {
                                               return Icon(
                                                 Icons.star_border,
-                                                color: AppColors.of(context).sombras
+                                                color: AppColors.of(context)
+                                                    .sombras
                                                     .withValues(alpha: 0.4),
                                                 size: 13,
                                               );
@@ -626,7 +684,9 @@ class ProductDetailScreen extends ConsumerWidget {
                                           review.comment,
                                           style: theme.textTheme.bodyMedium
                                               ?.copyWith(
-                                                color: AppColors.of(context).textoPrincipal,
+                                                color: AppColors.of(
+                                                  context,
+                                                ).textoPrincipal,
                                                 fontSize: 13,
                                                 height: 1.4,
                                               ),
@@ -662,7 +722,12 @@ class ProductDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSpecRow(BuildContext context, String key, String value, {bool isLast = false}) {
+  Widget _buildSpecRow(
+    BuildContext context,
+    String key,
+    String value, {
+    bool isLast = false,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: isLast ? 0 : 12.0),
       child: Row(
@@ -682,7 +747,10 @@ class ProductDetailScreen extends ConsumerWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 13, color: AppColors.of(context).sombras),
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.of(context).sombras,
+              ),
             ),
           ),
         ],
@@ -771,11 +839,7 @@ class ProductDetailScreen extends ConsumerWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white30),
                     ),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    child: Icon(Icons.close, color: Colors.white, size: 20),
                   ),
                 ),
               ),
@@ -786,10 +850,7 @@ class ProductDetailScreen extends ConsumerWidget {
                 right: 0,
                 child: Center(
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(20),
@@ -799,7 +860,8 @@ class ProductDetailScreen extends ConsumerWidget {
                       children: [
                         Icon(Icons.touch_app, color: Colors.white70, size: 14),
                         SizedBox(width: 6),
-                        Text('pellizca_o_toca_dos_veces_para_hacer_zoo'.tr(),
+                        Text(
+                          'pellizca_o_toca_dos_veces_para_hacer_zoo'.tr(),
                           style: TextStyle(color: Colors.white70, fontSize: 11),
                         ),
                       ],
@@ -883,7 +945,8 @@ class ProductDetailScreen extends ConsumerWidget {
                         color: AppColors.of(context).naranjaUnimet,
                       ),
                       SizedBox(width: 8),
-                      Text('escribir_resea'.tr(),
+                      Text(
+                        'escribir_resea'.tr(),
                         style: Theme.of(context).textTheme.displayMedium
                             ?.copyWith(
                               fontSize: 18,
@@ -896,7 +959,8 @@ class ProductDetailScreen extends ConsumerWidget {
                   SizedBox(height: 20),
 
                   // Selector de estrellas
-                  Text('tu_calificacin'.tr(),
+                  Text(
+                    'tu_calificacin'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.of(context).textoPrincipal,
@@ -943,7 +1007,8 @@ class ProductDetailScreen extends ConsumerWidget {
                     ),
                   SizedBox(height: 20),
 
-                  Text('tu_comentario'.tr(),
+                  Text(
+                    'tu_comentario'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: AppColors.of(context).textoPrincipal,
@@ -957,7 +1022,9 @@ class ProductDetailScreen extends ConsumerWidget {
                     decoration: InputDecoration(
                       hintText: 'escribe_tus_comentarios_aquí'.tr(),
                       hintStyle: TextStyle(
-                        color: AppColors.of(context).sombras.withValues(alpha: 0.6),
+                        color: AppColors.of(
+                          context,
+                        ).sombras.withValues(alpha: 0.6),
                         fontSize: 13,
                       ),
                       filled: true,
@@ -991,11 +1058,22 @@ class ProductDetailScreen extends ConsumerWidget {
                           ? null
                           : () async {
                               if (selectedRating == 0) {
-                                CustomNotification.show(context, message: 'por_favor_selecciona_una_calificacin'.tr(), type: NotificationType.info);
+                                CustomNotification.show(
+                                  context,
+                                  message:
+                                      'por_favor_selecciona_una_calificacin'
+                                          .tr(),
+                                  type: NotificationType.info,
+                                );
                                 return;
                               }
                               if (commentController.text.trim().isEmpty) {
-                                CustomNotification.show(context, message: 'por_favor_escribe_un_comentario'.tr(), type: NotificationType.info);
+                                CustomNotification.show(
+                                  context,
+                                  message: 'por_favor_escribe_un_comentario'
+                                      .tr(),
+                                  type: NotificationType.info,
+                                );
                                 return;
                               }
                               setSheetState(() => isSubmitting = true);
@@ -1013,12 +1091,22 @@ class ProductDetailScreen extends ConsumerWidget {
                                 );
                                 if (ctx.mounted) Navigator.of(ctx).pop();
                                 if (context.mounted) {
-                                  CustomNotification.show(context, message: 'resea_publicada_gracias_por_tu_opinin'.tr(), type: NotificationType.success);
+                                  CustomNotification.show(
+                                    context,
+                                    message:
+                                        'resea_publicada_gracias_por_tu_opinin'
+                                            .tr(),
+                                    type: NotificationType.success,
+                                  );
                                 }
                               } catch (e) {
                                 setSheetState(() => isSubmitting = false);
                                 if (context.mounted) {
-                                  CustomNotification.show(context, message: 'Error al publicar: $e', type: NotificationType.error);
+                                  CustomNotification.show(
+                                    context,
+                                    message: 'Error al publicar: $e',
+                                    type: NotificationType.error,
+                                  );
                                 }
                               }
                             },
@@ -1031,7 +1119,8 @@ class ProductDetailScreen extends ConsumerWidget {
                                 strokeWidth: 2,
                               ),
                             )
-                          : Text('publicar_resea'.tr(),
+                          : Text(
+                              'publicar_resea'.tr(),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
