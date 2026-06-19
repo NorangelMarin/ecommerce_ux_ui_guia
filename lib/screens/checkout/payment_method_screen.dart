@@ -12,7 +12,6 @@ import '../../providers/payment_method_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/payment_method.dart';
 import 'shipping_screen.dart' show CheckoutAddressData;
-import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../widgets/custom_notification.dart';
 
@@ -188,49 +187,49 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                   // Opciones de Pago
                   Column(
                     children: [
-                        if (paymentMethods.isNotEmpty) ...[
-                          _buildPaymentCard(
-                            index: 0,
-                            icon: Icons.account_balance_wallet,
-                            title: 'método_de_pago_guardado'.tr(),
-                            subtitle: 'usa_una_tarjeta_o_método'.tr(),
-                            expandedContent: _buildSavedMethodForm(
-                              paymentMethods,
-                            ),
+                      if (paymentMethods.isNotEmpty) ...[
+                        _buildPaymentCard(
+                          index: 0,
+                          icon: Icons.account_balance_wallet,
+                          title: 'método_de_pago_guardado'.tr(),
+                          subtitle: 'usa_una_tarjeta_o_método'.tr(),
+                          expandedContent: _buildSavedMethodForm(
+                            paymentMethods,
                           ),
-                          SizedBox(height: 16),
-                        ],
-                        _buildPaymentCard(
-                          index: 1,
-                          icon: Icons.credit_card,
-                          title: 'nueva_tarjeta_de_crédito_o'.tr(),
-                          subtitle: 'visa_mastercard'.tr(),
-                          expandedContent: _buildCreditCardForm(),
                         ),
                         SizedBox(height: 16),
-                        _buildPaymentCard(
-                          index: 2,
-                          icon: Icons.point_of_sale,
-                          title: 'pago_con_punto_de_venta'.tr(),
-                          subtitle: 'disponible_para_retiros_en_tienda'.tr(),
-                        ),
-                        SizedBox(height: 16),
-                        _buildPaymentCard(
-                          index: 3,
-                          icon: Icons.attach_money,
-                          title: 'pago_en_dolares_en_efectivo'.tr(),
-                          subtitle: 'disponible_para_retiros_en_tienda'.tr(),
-                        ),
-                        SizedBox(height: 16),
-                        _buildPaymentCard(
-                          index: 4,
-                          icon: Icons.account_balance,
-                          title: 'pago_movil'.tr(),
-                          subtitle: 'seleccione_para_vizualizar_los_datos'.tr(),
-                          expandedContent: _buildPagoMovilForm(),
-                        ),
                       ],
-                    ),
+                      _buildPaymentCard(
+                        index: 1,
+                        icon: Icons.credit_card,
+                        title: 'nueva_tarjeta_de_crédito_o'.tr(),
+                        subtitle: 'visa_mastercard'.tr(),
+                        expandedContent: _buildCreditCardForm(),
+                      ),
+                      SizedBox(height: 16),
+                      _buildPaymentCard(
+                        index: 2,
+                        icon: Icons.point_of_sale,
+                        title: 'pago_con_punto_de_venta'.tr(),
+                        subtitle: 'disponible_para_retiros_en_tienda'.tr(),
+                      ),
+                      SizedBox(height: 16),
+                      _buildPaymentCard(
+                        index: 3,
+                        icon: Icons.attach_money,
+                        title: 'pago_en_dolares_en_efectivo'.tr(),
+                        subtitle: 'disponible_para_retiros_en_tienda'.tr(),
+                      ),
+                      SizedBox(height: 16),
+                      _buildPaymentCard(
+                        index: 4,
+                        icon: Icons.account_balance,
+                        title: 'pago_movil'.tr(),
+                        subtitle: 'seleccione_para_vizualizar_los_datos'.tr(),
+                        expandedContent: _buildPagoMovilForm(),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 24),
 
                   SizedBox(height: 48),
@@ -275,10 +274,16 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                                 }
 
                                 String brand = 'VISA';
-                                if (_cardNumberController.text.startsWith('5'))
+                                if (_cardNumberController.text.startsWith(
+                                  '5',
+                                )) {
                                   brand = 'MASTERCARD';
-                                if (_cardNumberController.text.startsWith('3'))
+                                }
+                                if (_cardNumberController.text.startsWith(
+                                  '3',
+                                )) {
                                   brand = 'AMEX';
+                                }
                                 String last4 =
                                     _cardNumberController.text.length >= 4
                                     ? _cardNumberController.text
@@ -328,8 +333,9 @@ class _PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
                                         .read(paymentMethodRepositoryProvider)
                                         .addPaymentMethod(user.uid, cardToSave);
                                   }
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => _isSaving = false);
+                                  }
                                 }
 
                                 if (mounted) {

@@ -15,7 +15,6 @@ import '../../providers/auth_provider.dart';
 import '../../models/order.dart';
 import '../../providers/cart_provider.dart';
 import 'payment_method_screen.dart' show CheckoutData;
-import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../widgets/custom_notification.dart';
 
@@ -131,117 +130,119 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                                 resolvedAddress = cd!.addressData.newAddress;
                               } else if (cd?.addressData.addressId != null) {
                                 final addresses =
-                                    ref.read(userAddressesProvider).value ??
-                                    [];
+                                    ref.read(userAddressesProvider).value ?? [];
                                 resolvedAddress = addresses
                                     .cast<Address?>()
                                     .firstWhere(
-                                      (a) =>
-                                          a?.id == cd!.addressData.addressId,
+                                      (a) => a?.id == cd!.addressData.addressId,
                                       orElse: () => null,
                                     );
                               }
                               resolvedAddress ??=
                                   (ref.read(userAddressesProvider).value ?? [])
-                                          .isNotEmpty
-                                      ? (ref.read(userAddressesProvider).value ??
-                                              [])
-                                          .first
-                                      : null;
+                                      .isNotEmpty
+                                  ? (ref.read(userAddressesProvider).value ??
+                                            [])
+                                        .first
+                                  : null;
 
-                                // -- Resolver método de pago --
-                                PaymentMethod? resolvedPm;
-                                if (cd?.paymentData.newMethod != null) {
-                                  resolvedPm = cd!.paymentData.newMethod;
-                                } else if (cd?.paymentData.savedMethodId !=
-                                    null) {
-                                  final pms =
-                                      ref
-                                          .read(userPaymentMethodsProvider)
-                                          .value ??
-                                      [];
-                                  resolvedPm = pms
-                                      .cast<PaymentMethod?>()
-                                      .firstWhere(
-                                        (pm) =>
-                                            pm?.id ==
-                                            cd!.paymentData.savedMethodId,
-                                        orElse: () => null,
-                                      );
-                                }
-                                // Fallback a métodos no basados en tarjeta
-                                final nonCardTypes = {'pos', 'cash', 'mobile'};
-                                final isNonCard = nonCardTypes.contains(
-                                  cd?.paymentData.methodType,
+                              // -- Resolver método de pago --
+                              PaymentMethod? resolvedPm;
+                              if (cd?.paymentData.newMethod != null) {
+                                resolvedPm = cd!.paymentData.newMethod;
+                              } else if (cd?.paymentData.savedMethodId !=
+                                  null) {
+                                final pms =
+                                    ref
+                                        .read(userPaymentMethodsProvider)
+                                        .value ??
+                                    [];
+                                resolvedPm = pms
+                                    .cast<PaymentMethod?>()
+                                    .firstWhere(
+                                      (pm) =>
+                                          pm?.id ==
+                                          cd!.paymentData.savedMethodId,
+                                      orElse: () => null,
+                                    );
+                              }
+                              // Fallback a métodos no basados en tarjeta
+                              final nonCardTypes = {'pos', 'cash', 'mobile'};
+                              final isNonCard = nonCardTypes.contains(
+                                cd?.paymentData.methodType,
+                              );
+
+                              if (resolvedAddress == null ||
+                                  (resolvedPm == null && !isNonCard)) {
+                                CustomNotification.show(
+                                  context,
+                                  message:
+                                      'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
+                                          .tr(),
+                                  type: NotificationType.error,
                                 );
+                                return;
+                              }
 
-                                if (resolvedAddress == null ||
-                                    (resolvedPm == null && !isNonCard)) {
-                                  CustomNotification.show(context, message: 'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
-                                            .tr(), type: NotificationType.error);
-                                  return;
-                                }
+                              setState(() => _isProcessing = true);
+                              try {
+                                final user = ref.read(authStateProvider).value;
+                                if (user != null) {
+                                  final subtotal = ref.read(
+                                    cartSubtotalProvider,
+                                  );
+                                  final discount = ref.read(
+                                    cartDiscountProvider,
+                                  );
+                                  final total = ref.read(cartTotalProvider);
 
-                                setState(() => _isProcessing = true);
-                                try {
-                                  final user = ref
-                                      .read(authStateProvider)
-                                      .value;
-                                  if (user != null) {
-                                    final subtotal = ref.read(
-                                      cartSubtotalProvider,
-                                    );
-                                    final discount = ref.read(
-                                      cartDiscountProvider,
-                                    );
-                                    final total = ref.read(cartTotalProvider);
+                                  final newOrder = OrderModel(
+                                    id: '',
+                                    userId: user.uid,
+                                    items: cartItems,
+                                    subtotal: subtotal,
+                                    discount: discount,
+                                    total: total,
+                                    shippingAddressId: resolvedAddress.id,
+                                    paymentMethodId:
+                                        resolvedPm?.id ??
+                                        cd?.paymentData.methodType ??
+                                        'other',
+                                    shippingAddressSnapshot: resolvedAddress
+                                        .toMap(),
+                                    paymentMethodSnapshot:
+                                        resolvedPm?.toMap() ??
+                                        {'type': cd?.paymentData.methodType},
+                                    createdAt: DateTime.now(),
+                                    status: 'Pago confirmado',
+                                  );
 
-                                    final newOrder = OrderModel(
-                                      id: '',
-                                      userId: user.uid,
-                                      items: cartItems,
-                                      subtotal: subtotal,
-                                      discount: discount,
-                                      total: total,
-                                      shippingAddressId:
-                                          resolvedAddress.id,
-                                      paymentMethodId:
-                                          resolvedPm?.id ??
-                                          cd?.paymentData.methodType ??
-                                          'other',
-                                      shippingAddressSnapshot: resolvedAddress
-                                          .toMap(),
-                                      paymentMethodSnapshot:
-                                          resolvedPm?.toMap() ??
-                                          {'type': cd?.paymentData.methodType},
-                                      createdAt: DateTime.now(),
-                                      status: 'Pago confirmado',
-                                    );
+                                  final orderId = await ref
+                                      .read(orderRepositoryProvider)
+                                      .createOrder(user.uid, newOrder);
+                                  await ref.read(cartProvider.notifier).clear();
 
-                                    final orderId = await ref
-                                        .read(orderRepositoryProvider)
-                                        .createOrder(user.uid, newOrder);
-                                    await ref
-                                        .read(cartProvider.notifier)
-                                        .clear();
-
-                                    if (!context.mounted) return;
-                                    context.pushReplacement(
-                                      '/receipt/$orderId',
-                                      extra: true,
-                                    );
-                                  }
-                                } catch (e) {
                                   if (!context.mounted) return;
-                                  CustomNotification.show(context, message: 'Error al procesar: $e', type: NotificationType.error);
-                                } finally {
-                                  if (mounted) {
-                                    setState(() => _isProcessing = false);
-                                  }
+                                  context.pushReplacement(
+                                    '/receipt/$orderId',
+                                    extra: true,
+                                  );
                                 }
-                              },
-                      ),
+                              } catch (e) {
+                                if (!context.mounted) return;
+                                CustomNotification.show(
+                                  context,
+                                  message: 'Error al procesar: $e',
+                                  type: NotificationType.error,
+                                );
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _isProcessing = false);
+                                }
+                              }
+                            },
                     ),
+                  ),
                 ],
               ),
             ),
@@ -263,7 +264,9 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
       decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +393,9 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
       decoration: BoxDecoration(
         color: AppColors.of(context).blanco,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -485,7 +490,9 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
       decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+        ),
       ),
       child: Stack(
         children: [
@@ -527,7 +534,11 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
             top: 0,
             child: GestureDetector(
               onTap: () => context.push('/shipping'),
-              child: Icon(Icons.edit, color: AppColors.of(context).naranjaUnimet, size: 20),
+              child: Icon(
+                Icons.edit,
+                color: AppColors.of(context).naranjaUnimet,
+                size: 20,
+              ),
             ),
           ),
         ],
@@ -572,7 +583,9 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
       decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+        ),
       ),
       child: Stack(
         children: [
@@ -608,7 +621,9 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                     color: AppColors.of(context).blanco,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+                      color: AppColors.of(
+                        context,
+                      ).sombras.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Row(
@@ -667,7 +682,11 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
             top: 0,
             child: GestureDetector(
               onTap: () => context.push('/payment_method'),
-              child: Icon(Icons.edit, color: AppColors.of(context).naranjaUnimet, size: 20),
+              child: Icon(
+                Icons.edit,
+                color: AppColors.of(context).naranjaUnimet,
+                size: 20,
+              ),
             ),
           ),
         ],
