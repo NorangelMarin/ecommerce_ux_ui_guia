@@ -32,8 +32,14 @@ class OrderStatusScreen extends ConsumerWidget {
             color: AppColors.of(context).textoPrincipal,
           ),
         ),
-        leadingIcon: Icons.menu,
-        onLeadingPressed: null,
+        leadingIcon: Icons.arrow_back_ios_new,
+        onLeadingPressed: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/history');
+          }
+        },
         showActionIcon: false,
       ),
       body: ordersAsync.when(
@@ -109,7 +115,6 @@ class OrderStatusScreen extends ConsumerWidget {
                         title: 'reconocimiento_vs_recuerdo'.tr(),
                         description:
                             'Proveer un ID de orden claro y truncado cumple con la heurística de "Reconocimiento antes que recuerdo", dando al usuario control y confianza sobre su transacción.',
-                        alignment: Alignment.centerRight,
                         child: Text(
                           '${'orden'.tr()} ${order.id.length > 8 ? order.id.substring(0, 8).toUpperCase() : order.id.toUpperCase()}',
                           style: theme.textTheme.displayMedium?.copyWith(
@@ -129,7 +134,6 @@ class OrderStatusScreen extends ConsumerWidget {
                         title: 'visibilidad_del_estado_del_sistema'.tr(),
                         description:
                             'Mantener al usuario informado sobre lo que está ocurriendo a través de retroalimentación apropiada en tiempo razonable (Heurística de Nielsen #1).',
-                        alignment: Alignment.topRight,
                         child: _buildTimelineBlock(context, order.status),
                       ),
 
@@ -220,7 +224,6 @@ class OrderStatusScreen extends ConsumerWidget {
       title: 'agrupación_y_carga_cognitiva'.tr(),
       description:
           'Agrupar la información esencial (artículos, total, entrega) en una tarjeta reduce la carga cognitiva del usuario, aplicando la Ley de Miller y principios de Gestalt.',
-      alignment: Alignment.topRight,
       child: Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -307,12 +310,12 @@ class OrderStatusScreen extends ConsumerWidget {
 
     final step1Active =
         st == 'pago confirmado' ||
-        st == 'confirmado' ||
-        st == 'preparando' ||
+        st == 'en preparación' ||
+        st == 'en preparacion' ||
         st == 'enviado' ||
         st == 'entregado';
     final step2Active =
-        st == 'preparando' || st == 'enviado' || st == 'entregado';
+        st == 'en preparación' || st == 'en preparacion' || st == 'enviado' || st == 'entregado';
     final step3Active = st == 'enviado' || st == 'entregado';
     final step4Active = st == 'entregado';
 
@@ -618,5 +621,23 @@ class OrderStatusScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _translateStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'en proceso':
+        return 'en_proceso'.tr();
+      case 'enviado':
+        return 'enviado'.tr();
+      case 'entregado':
+        return 'entregado'.tr();
+      case 'pago confirmado':
+        return 'pago_confirmado'.tr();
+      case 'en preparación':
+      case 'en preparacion':
+        return 'en_preparación'.tr();
+      default:
+        return status;
+    }
   }
 }

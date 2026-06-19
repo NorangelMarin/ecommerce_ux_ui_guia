@@ -11,6 +11,7 @@ import '../../providers/address_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/address.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class AddAddressScreen extends ConsumerStatefulWidget {
   final Address? addressToEdit;
@@ -87,7 +88,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('error_obteniendo_ubicacion'.tr(args: [e.toString()]))));
+        CustomNotification.show(context, message: 'error_obteniendo_ubicacion'.tr(args: [e.toString()]), type: NotificationType.error);
       }
     } finally {
       if (mounted) {
@@ -105,9 +106,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
 
     if (estado.isEmpty || ciudad.isEmpty || municipio.isEmpty || urbanizacion.isEmpty || alias.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('por_favor_completa_todos_los'.tr())),
-        );
+        CustomNotification.show(context, message: 'por_favor_completa_todos_los'.tr(), type: NotificationType.info);
       }
       return;
     }
@@ -146,9 +145,7 @@ class _AddAddressScreenState extends ConsumerState<AddAddressScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error_al_guardar'.tr(args: [e.toString()]))),
-        );
+        CustomNotification.show(context, message: 'error_al_guardar'.tr(args: [e.toString()]), type: NotificationType.error);
       }
     } finally {
       if (mounted) {

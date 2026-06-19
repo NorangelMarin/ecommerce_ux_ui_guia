@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../widgets/guide_wrapper.dart';
 
 class CheckoutStepper extends StatelessWidget {
   final int currentStep; // 1, 2, o 3
@@ -14,15 +15,20 @@ class CheckoutStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildStep(context, 1, 'direccion_stepper'.tr(), currentStep >= 1),
-          _buildLine(context, currentStep >= 2),
-          _buildStep(context, 2, 'metodo_de_pago_stepper'.tr(), currentStep >= 2),
-          _buildLine(context, currentStep >= 3),
-          _buildStep(context, 3, 'confirmacion_stepper'.tr(), currentStep >= 3),
-        ],
+      child: GuideWrapper(
+        id: 'checkout_stepper_guide',
+        title: 'Barra de Progreso',
+        description: 'Indica en qué paso del proceso de compra te encuentras. Dividir el checkout en pasos reduce la fricción y mejora la tasa de conversión.',
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildStep(context, 1, 'direccion_stepper'.tr(), currentStep >= 1),
+            _buildLine(context, currentStep >= 2),
+            _buildStep(context, 2, 'metodo_de_pago_stepper'.tr(), currentStep >= 2),
+            _buildLine(context, currentStep >= 3),
+            _buildStep(context, 3, 'confirmacion_stepper'.tr(), currentStep >= 3),
+          ],
+        ),
       ),
     );
   }

@@ -10,12 +10,14 @@ import '../../providers/auth_provider.dart';
 import '../../providers/product_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/wishlist_provider.dart';
+import '../../providers/order_provider.dart';
 import '../../models/cart_item.dart';
 import '../../widgets/floating_chat_button.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/guide_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -33,6 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final wishlistIds = ref.watch(wishlistProvider);
     final categoriesData = ref.watch(categoriesProvider);
     final isGuideMode = ref.watch(guideProvider);
+    final userOrdersAsync = ref.watch(userOrdersProvider);
 
     // Mapa id -> nombre para resolver IDs de categoría almacenados en productos
     final Map<String, String> categoryIdToName = {
@@ -122,16 +125,108 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
+            // Banner de Pedido Pendiente (si existe)
+            if (userOrdersAsync.value != null) ...[
+              Builder(
+                builder: (context) {
+                  final activeOrders = userOrdersAsync.value!
+                      .where((o) => ['Pago confirmado', 'En preparación', 'Enviado'].contains(o.status))
+                      .toList();
+                  if (activeOrders.isEmpty) return SizedBox.shrink();
+
+                  if (activeOrders.length == 1) {
+                    final order = activeOrders.first;
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.of(context).fondoTarjetas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tienes un pedido pendiente', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
+                                  Text('Orden ${order.id.length > 6 ? order.id.substring(0, 6).toUpperCase() : order.id}', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () => context.push('/order_status/${order.id}'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                              child: Text('Ver Estado', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.of(context).fondoTarjetas,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time_filled, color: AppColors.of(context).naranjaUnimet),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tienes ${activeOrders.length} pedidos pendientes', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold, color: AppColors.of(context).textoPrincipal)),
+                                  Text('Órdenes en proceso', style: theme.textTheme.bodySmall?.copyWith(color: AppColors.of(context).sombras)),
+                                ],
+                              ),
+                            ),
+                            OutlinedButton(
+                              onPressed: () => context.push('/history'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(horizontal: 12),
+                              ),
+                              child: Text('Ver Todos', style: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+
             // Título de Categorías Destacadas
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('categorias_destacadas'.tr(),
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.of(context).textoPrincipal,
-                    fontSize: 18,
+                child: GuideWrapper(
+                  id: 'home_categorias_destacadas',
+                  title: 'Categorías Destacadas',
+                  description: 'Agrupar productos en categorías claramente definidas ayuda al usuario a encontrar lo que busca más rápido, reduciendo la carga cognitiva.',
+                  child: Text('categorias_destacadas'.tr(),
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.of(context).textoPrincipal,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),
@@ -145,7 +240,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 title: 'bento_grid_de_categorías'.tr(),
                 description:
                     'Este diseño tipo "bento" organiza las categorías de forma visualmente atractiva y fácil de tocar (Ley de Fitts). Los bloques de color sólido con iconos grandes ayudan a la identificación rápida y reducen la carga cognitiva para usuarios móviles en Caracas que buscan agilidad en sus compras.',
-                alignment: Alignment.topRight,
                 child: SizedBox(
                   height: 180,
                   child: Row(
@@ -156,6 +250,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onTap: () =>
                               context.push('/catalog', extra: 'Laptops'),
                           child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
                             decoration: BoxDecoration(
                               color: AppColors.of(context).verdeSaman,
                               borderRadius: BorderRadius.circular(12),
@@ -270,10 +366,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GuideWrapper(
+                    id: 'home_productos_destacados',
                     title: 'productos_destacados'.tr(),
-                    description:
-                        'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
-                    alignment: Alignment.topRight,
+                    description: 'Colocar los productos más importantes en la pantalla inicial reduce el esfuerzo de búsqueda. Además, el scroll horizontal mantiene limpio el diseño vertical y aprovecha la exploración natural en pantallas táctiles.',
                     child: Text('productos_destacados'.tr(),
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -331,7 +426,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = featuredProducts[index];
-                      return ProductCard(
+                      Widget card = ProductCard(
                         type: CardType.vertical,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -339,9 +434,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         imageUrl: product.imageUrl,
                         discount: product.discount,
                         isFavorite: wishlistIds.contains(product.id),
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onCartPressed: () {
                           ref
                               .read(cartProvider.notifier)
@@ -358,19 +457,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       : 0.0,
                                 ),
                               );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${product.title} añadido al carrito',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: AppColors.of(context).azulSistemas,
-                            ),
-                          );
+                          CustomNotification.show(context, message: '${product.title} añadido al carrito', type: NotificationType.success);
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
+                        showTooltip: index == 0,
                       );
+                      
+                      return card;
                     },
                   );
                 },
@@ -386,10 +480,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: GuideWrapper(
+                  id: 'home_ofertas_especiales',
                   title: 'ofertas_especiales_aversión_a_la'.tr(),
-                  description:
-                      'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
-                  alignment: Alignment.topRight,
+                  description: 'Mostrar claramente los descuentos apela al principio psicológico de "aversión a la pérdida". Los usuarios perciben mayor valor al ver cuánto están ahorrando, motivando la compra por oportunidad.',
                   child: Text('ofertas_especiales'.tr(),
                     style: theme.textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -439,7 +532,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final product = offerProducts[index];
-                      return ProductCard(
+                      Widget card = ProductCard(
                         type: CardType.horizontal,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -447,12 +540,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         imageUrl: product.imageUrl,
                         discount: product.discount,
                         isFavorite: wishlistIds.contains(product.id),
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
+                        showTooltip: index == 0,
                       );
+                      
+                      return card;
                     },
                   );
                 },

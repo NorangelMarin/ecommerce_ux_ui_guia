@@ -9,6 +9,7 @@ import '../../providers/order_provider.dart';
 import '../../models/order.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../utils/translate_status.dart';
 
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -114,11 +115,14 @@ class HistoryScreen extends ConsumerWidget {
                     ],
                   ),
                   SizedBox(height: 12),
-                  ...groupOrdersList.map(
-                    (order) => Padding(
-                      padding: EdgeInsets.only(bottom: 12),
-                      child: _buildOrderCard(context, order),
-                    ),
+                  ...groupOrdersList.asMap().entries.map(
+                    (entry) {
+                      final isFirst = groupIndex == 0 && entry.key == 0;
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 12),
+                        child: _buildOrderCard(context, entry.value, isFirst: isFirst),
+                      );
+                    },
                   ),
                   SizedBox(height: 8),
                 ],
@@ -139,7 +143,7 @@ class HistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, OrderModel order) {
+  Widget _buildOrderCard(BuildContext context, OrderModel order, {bool isFirst = false}) {
     final theme = Theme.of(context);
 
     String statusColorKey = 'gray';
@@ -190,30 +194,16 @@ class HistoryScreen extends ConsumerWidget {
                   size: 22,
                 ),
               ),
-              GuideWrapper(
-                title: 'visibilidad_del_estado_del_sistema'.tr(),
-                description:
-                    'Mantener informado al usuario sobre el estado de su orden mediante colores semánticos (ej. verde para entregado) genera confianza y reduce la ansiedad posventa.',
-                alignment: Alignment.topRight,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: statusColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Text(
-                    order.status.toUpperCase(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-              ),
+              if (isFirst)
+                GuideWrapper(
+                  id: 'history_order_status',
+                  title: 'visibilidad_del_estado_del_sistema'.tr(),
+                  description:
+                      'Mantener informado al usuario sobre el estado de su orden mediante colores semánticos (ej. verde para entregado) genera confianza y reduce la ansiedad posventa.',
+                  child: _buildStatusBadge(context, theme, order, statusColor),
+                )
+              else
+                _buildStatusBadge(context, theme, order, statusColor),
             ],
           ),
           SizedBox(height: 12),
@@ -273,5 +263,26 @@ class HistoryScreen extends ConsumerWidget {
       default:
         return AppColors.of(context).sombras;
     }
+  }
+
+  Widget _buildStatusBadge(BuildContext context, ThemeData theme, OrderModel order, Color statusColor) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: statusColor.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Text(
+        translateStatus(order.status).toUpperCase(),
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: statusColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 10,
+        ),
+      ),
+    );
   }
 }

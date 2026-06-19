@@ -13,6 +13,7 @@ import '../../providers/auth_provider.dart';
 import '../../models/address.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class AddressesScreen extends ConsumerWidget {
   const AddressesScreen({super.key});
@@ -72,11 +73,26 @@ class AddressesScreen extends ConsumerWidget {
                 }
                 return Column(
                   children: addresses
+                      .asMap()
+                      .entries
                       .map(
-                        (addr) => Padding(
-                          padding: EdgeInsets.only(bottom: 16),
-                          child: _buildAddressCard(context, ref, addr),
-                        ),
+                        (entry) {
+                          final index = entry.key;
+                          final addr = entry.value;
+                          final card = Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: _buildAddressCard(context, ref, addr),
+                          );
+                          if (index == 0) {
+                            return GuideWrapper(
+                              id: 'addresses_first_item',
+                              title: 'Dirección Guardada',
+                              description: 'Permitir al usuario gestionar múltiples direcciones reduce drásticamente la fricción durante el checkout. Al almacenar esta información de forma segura, se minimiza el abandono del carrito causado por formularios extensos.',
+                              child: card,
+                            );
+                          }
+                          return card;
+                        },
                       )
                       .toList(),
                 );
@@ -163,11 +179,7 @@ class AddressesScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final badgeColor = _getBadgeColor(context, addr.labelColor);
 
-    return GuideWrapper(
-      title: 'reconocimiento_vs_recuerdo'.tr(),
-      description:
-          'Asignar etiquetas cortas ("Casa", "Oficina") con colores ayuda al usuario a reconocer rápidamente sus ubicaciones guardadas sin tener que leer y recordar toda la dirección exacta, reduciendo la carga cognitiva.',
-      child: Container(
+    return Container(
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.of(context).blanco,
@@ -255,7 +267,6 @@ class AddressesScreen extends ConsumerWidget {
             _buildAddressRow(context, theme, 'Ubicación detallada:', addr.urbanizacion),
           ],
         ),
-      ),
     );
   }
 
@@ -439,9 +450,7 @@ class AddressesScreen extends ConsumerWidget {
     } catch (e) {
       if (!context.mounted) return;
       Navigator.pop(context); // Cerrar loading
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('error_general'.tr(args: [e.toString()]))),
-      );
+      CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
     }
   }
 
@@ -528,11 +537,7 @@ class AddressesScreen extends ConsumerWidget {
                 }
                 if (ctx.mounted) {
                   Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('dirección_guardada_correctamente'.tr()),
-                    ),
-                  );
+                  CustomNotification.show(context, message: 'dirección_guardada_correctamente'.tr(), type: NotificationType.info);
                 }
               },
               child: Text('guardar'.tr()),

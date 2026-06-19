@@ -16,6 +16,7 @@ import '../../models/category.dart';
 import '../../providers/accessibility_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class CatalogScreen extends ConsumerStatefulWidget {
   final String? initialCategory;
@@ -78,24 +79,11 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           },
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('escuchando_di_el_nombre_del'.tr()),
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'escuchando_di_el_nombre_del'.tr(), type: NotificationType.info);
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('reconocimiento_de_voz_no_disponible_o_pe'.tr()),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'reconocimiento_de_voz_no_disponible_o_pe'.tr(), type: NotificationType.info);
         }
       }
     } else {
@@ -259,31 +247,58 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   ),
 
                   SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.of(context).naranjaUnimet,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.of(context).sombras,
+                            side: BorderSide(color: AppColors.of(context).sombras.withValues(alpha: 0.5)),
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _selectedCategory = null;
+                              _maxPrice = null;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'limpiar'.tr(),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _selectedCategory = tempCategory;
-                          _maxPrice = tempMaxPrice;
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'aplicar_filtros'.tr(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.of(context).naranjaUnimet,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _selectedCategory = tempCategory;
+                              _maxPrice = tempMaxPrice;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'aplicar_filtros'.tr(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -348,15 +363,20 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         size: 20,
                       ),
                       suffixIcon: accessState.voiceSearch
-                          ? IconButton(
-                              icon: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
-                                color: _isListening
-                                    ? Colors.red
-                                    : AppColors.of(context).naranjaUnimet,
-                                size: 20,
+                          ? GuideWrapper(
+                              id: 'catalog_voice_search',
+                              title: 'Búsqueda por Voz y Texto',
+                              description: 'Usa el micrófono para buscar por voz o escribe características del producto para encontrar lo que necesitas rápidamente.',
+                              child: IconButton(
+                                icon: Icon(
+                                  _isListening ? Icons.mic : Icons.mic_none,
+                                  color: _isListening
+                                      ? Colors.red
+                                      : AppColors.of(context).naranjaUnimet,
+                                  size: 20,
+                                ),
+                                onPressed: _listen,
                               ),
-                              onPressed: _listen,
                             )
                           : null,
                       contentPadding: EdgeInsets.symmetric(
@@ -468,7 +488,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                 child: Text(
                   _searchQuery.isNotEmpty
                       ? '${'resultados_de'.tr()}"$_searchQuery"'
@@ -482,6 +502,46 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   ),
                 ),
               ),
+              
+              if (_selectedCategory != null || (_maxPrice != null && _maxPrice! < 5000) || _sortOrder != 'none')
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Wrap(
+                    spacing: 8.0,
+                    children: [
+                      if (_selectedCategory != null)
+                        Chip(
+                          label: Text(_selectedCategory!),
+                          onDeleted: () => setState(() => _selectedCategory = null),
+                          backgroundColor: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.1),
+                          labelStyle: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12),
+                          deleteIconColor: AppColors.of(context).naranjaUnimet,
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                      if (_maxPrice != null && _maxPrice! < 5000)
+                        Chip(
+                          label: Text('Max: \$${_maxPrice!.toStringAsFixed(0)}'),
+                          onDeleted: () => setState(() => _maxPrice = null),
+                          backgroundColor: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.1),
+                          labelStyle: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12),
+                          deleteIconColor: AppColors.of(context).naranjaUnimet,
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                      if (_sortOrder != 'none')
+                        Chip(
+                          label: Text(_sortOrder == 'asc' ? 'A-Z' : 'Z-A'),
+                          onDeleted: () => setState(() => _sortOrder = 'none'),
+                          backgroundColor: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.1),
+                          labelStyle: TextStyle(color: AppColors.of(context).naranjaUnimet, fontSize: 12),
+                          deleteIconColor: AppColors.of(context).naranjaUnimet,
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                    ],
+                  ),
+                ),
 
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -507,7 +567,6 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                       title: 'filtros_y_ordenamiento_control_del'.tr(),
                       description:
                           'Permitir que el usuario filtre y ordene el catálogo reduce la frustración al buscar productos específicos. El diseño compacto a la derecha se alinea con los patrones estándar y facilita el acceso al pulgar.',
-                      alignment: Alignment.topRight,
                       child: Row(
                         children: [
                           Container(
@@ -518,7 +577,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                             child: IconButton(
                               icon: Icon(
                                 Icons.tune,
-                                color: AppColors.of(context).blanco,
+                                color: Colors.white,
                                 size: 20,
                               ),
                               onPressed: () =>
@@ -540,7 +599,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                             child: IconButton(
                               icon: Icon(
                                 Icons.sort,
-                                color: AppColors.of(context).blanco,
+                                color: Colors.white,
                                 size: 20,
                               ),
                               onPressed: _showSortModal,
@@ -639,7 +698,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     }
 
                     return GridView.builder(
-                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                      padding: EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 16),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisExtent: 236,
@@ -652,7 +711,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                         final displayCategory = resolvedCategoryName(
                           product.categories,
                         );
-                        return ProductCard(
+                        final card = ProductCard(
                           type: CardType.vertical,
                           title: product.title,
                           price: '\$ ${product.price.toStringAsFixed(2)}',
@@ -660,9 +719,13 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                           imageUrl: product.imageUrl,
                           discount: product.discount,
                           isFavorite: wishlistIds.contains(product.id),
-                          onFavoritePressed: () => ref
-                              .read(wishlistProvider.notifier)
-                              .toggleProduct(product.id),
+                          onFavoritePressed: () {
+                            final isAdding = !wishlistIds.contains(product.id);
+                            ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                            if (isAdding) {
+                              CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                            }
+                          },
                           onCartPressed: () {
                             ref
                                 .read(cartProvider.notifier)
@@ -681,19 +744,22 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                         : 0.0,
                                   ),
                                 );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${product.title}${'anadido_al_carrito'.tr()}',
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: AppColors.of(context).azulSistemas,
-                              ),
-                            );
+                            CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
                           },
                           onTap: () =>
                               context.push('/product_detail/${product.id}'),
                         );
+
+                        if (index == 0) {
+                          return GuideWrapper(
+                            id: 'catalog_combined',
+                            title: 'Tarjeta de producto',
+                            description: 'Mostrar todos los artículos agrupados en una cuadrícula facilita la interacción, el escaneo visual y le permite al usuario buscar rápidamente su producto, reduciendo la frustración y el abandono.',
+                            child: card,
+                          );
+                        }
+
+                        return card;
                       },
                     );
                   },

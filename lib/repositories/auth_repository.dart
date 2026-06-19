@@ -13,14 +13,34 @@ class AuthRepository {
 
   Future<void> _createUserInFirestore(User user, {String? name}) async {
     final userRef = _firestore.collection('users').doc(user.uid);
-    await userRef.set({
-      'id': user.uid,
-      'displayName': name ?? user.displayName ?? '',
-      'email': user.email,
-      'phoneNumber': user.phoneNumber ?? '',
-      'photoUrl': user.photoURL ?? '',
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    final docSnap = await userRef.get();
+    
+    if (!docSnap.exists) {
+      await userRef.set({
+        'id': user.uid,
+        'displayName': name ?? user.displayName ?? '',
+        'email': user.email,
+        'phoneNumber': user.phoneNumber ?? '',
+        'photoUrl': user.photoURL ?? '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } else {
+      // Solo actualizamos campos si la auth de Firebase provee datos nuevos que no teníamos, 
+      // o simplemente actualizamos el email por seguridad. No sobreescribir teléfono.
+      final updates = <String, dynamic>{};
+      if (user.email != null) updates['email'] = user.email;
+      if (name != null && name.isNotEmpty) updates['displayName'] = name;
+      else if (user.displayName != null && user.displayName!.isNotEmpty && (docSnap.data()?['displayName'] ?? '').isEmpty) {
+        updates['displayName'] = user.displayName;
+      }
+      if (user.photoURL != null && user.photoURL!.isNotEmpty && (docSnap.data()?['photoUrl'] ?? '').isEmpty) {
+        updates['photoUrl'] = user.photoURL;
+      }
+      
+      if (updates.isNotEmpty) {
+        await userRef.update(updates);
+      }
+    }
   }
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();

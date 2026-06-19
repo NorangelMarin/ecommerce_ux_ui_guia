@@ -10,7 +10,7 @@ import '../../providers/payment_method_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/payment_method.dart';
 import 'package:easy_localization/easy_localization.dart';
-
+import '../../widgets/guide_wrapper.dart';
 class PaymentMethodsScreen extends ConsumerWidget {
   const PaymentMethodsScreen({super.key});
 
@@ -39,11 +39,16 @@ class PaymentMethodsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('tus_mtodos_de_pago'.tr(),
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: AppColors.of(context).textoPrincipal,
+            GuideWrapper(
+              id: 'payment_methods_title',
+              title: 'Gestión de Pagos',
+              description: 'Permitir que el usuario guarde y gestione sus métodos de pago acelera el proceso de checkout en compras futuras, reduciendo la fricción y mejorando la tasa de conversión.',
+              child: Text('tus_mtodos_de_pago'.tr(),
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: AppColors.of(context).textoPrincipal,
+                ),
               ),
             ),
             SizedBox(height: 32),

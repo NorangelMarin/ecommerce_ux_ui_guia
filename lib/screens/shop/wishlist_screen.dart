@@ -16,6 +16,7 @@ import '../../models/category.dart';
 import '../../providers/accessibility_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class WishlistScreen extends ConsumerStatefulWidget {
   const WishlistScreen({super.key});
@@ -73,24 +74,11 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
           },
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('escuchando_di_el_nombre_del'.tr()),
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'escuchando_di_el_nombre_del'.tr(), type: NotificationType.info);
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('reconocimiento_de_voz_no_disponible_o_pe'.tr()),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.of(context).textoPrincipal,
-            ),
-          );
+          CustomNotification.show(context, message: 'reconocimiento_de_voz_no_disponible_o_pe'.tr(), type: NotificationType.info);
         }
       }
     } else {
@@ -370,16 +358,21 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
-            child: Text(
-              _searchQuery.isNotEmpty
-                  ? '${'resultados_de'.tr()}"$_searchQuery"'
-                  : _selectedCategory != null
-                  ? '${'categora'.tr()}: $_selectedCategory'
-                  : 'tus_productos_favoritos'.tr(),
-              style: theme.textTheme.displayMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.of(context).textoPrincipal,
-                fontSize: 20,
+            child: GuideWrapper(
+              id: 'wishlist_title',
+              title: 'Artículos Guardados',
+              description: 'La lista de deseos actúa como un puente entre el descubrimiento y la compra diferida. Permite al usuario guardar productos para decisiones futuras, mejorando la retención y la conversión a largo plazo.',
+              child: Text(
+                _searchQuery.isNotEmpty
+                    ? '${'resultados_de'.tr()}"$_searchQuery"'
+                    : _selectedCategory != null
+                    ? '${'categora'.tr()}: $_selectedCategory'
+                    : 'tus_productos_favoritos'.tr(),
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.of(context).textoPrincipal,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
@@ -462,7 +455,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.tune,
-                          color: AppColors.of(context).blanco,
+                          color: Colors.white,
                           size: 20,
                         ),
                         onPressed: () =>
@@ -484,7 +477,7 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.sort,
-                          color: AppColors.of(context).blanco,
+                          color: Colors.white,
                           size: 20,
                         ),
                         onPressed: _showSortModal,
@@ -543,16 +536,20 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                     itemCount: wishlistProducts.length,
                     itemBuilder: (context, index) {
                       final product = wishlistProducts[index];
-                      return ProductCard(
+                      final card = ProductCard(
                         type: CardType.vertical,
                         title: product.title,
                         price: '\$ ${product.price.toStringAsFixed(2)}',
                         category: resolvedCategoryName(product.categories),
                         imageUrl: product.imageUrl,
                         isFavorite: true,
-                        onFavoritePressed: () => ref
-                            .read(wishlistProvider.notifier)
-                            .toggleProduct(product.id),
+                        onFavoritePressed: () {
+                          final isAdding = !wishlistIds.contains(product.id);
+                          ref.read(wishlistProvider.notifier).toggleProduct(product.id);
+                          if (isAdding) {
+                            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+                          }
+                        },
                         onCartPressed: () {
                           ref
                               .read(cartProvider.notifier)
@@ -569,19 +566,12 @@ class _WishlistScreenState extends ConsumerState<WishlistScreen> {
                                       : 0.0,
                                 ),
                               );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${product.title}${'anadido_al_carrito'.tr()}',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              backgroundColor: AppColors.of(context).azulSistemas,
-                            ),
-                          );
+                          CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
                         },
                         onTap: () =>
                             context.push('/product_detail/${product.id}'),
                       );
+                      return card;
                     },
                   ),
           ),

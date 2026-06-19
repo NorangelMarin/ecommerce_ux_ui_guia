@@ -7,6 +7,7 @@ import '../../widgets/custom_text_field.dart';
 import '../../widgets/unimet_logo.dart';
 import '../../theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -40,12 +41,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (mounted) context.go('/home');
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: Colors.red,
-            )
-          );
+          CustomNotification.show(context, message: e.toString(), type: NotificationType.error);
         }
       } finally {
         if (mounted) setState(() => _isLoading = false);
@@ -62,12 +58,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          )
-        );
+        if (!e.toString().contains('sign_in_canceled') && !e.toString().contains('cancelado')) {
+          CustomNotification.show(context, message: 'Inicio de sesión cancelado o fallido: ${e.toString()}', type: NotificationType.error);
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

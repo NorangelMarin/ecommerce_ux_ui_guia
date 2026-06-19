@@ -47,7 +47,9 @@ class TopNavigationBar extends StatelessWidget implements PreferredSizeWidget {
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.displayMedium?.copyWith(
           fontSize: 13,
-          color: theme.colorScheme.primary,
+          color: theme.brightness == Brightness.dark 
+              ? Colors.white 
+              : theme.colorScheme.primary,
         ),
       ),
       actions: [

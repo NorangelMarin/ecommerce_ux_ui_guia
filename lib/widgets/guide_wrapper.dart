@@ -9,6 +9,7 @@ class GuideWrapper extends ConsumerWidget {
   final String title;
   final String description;
   final AlignmentGeometry alignment;
+  final String? id;
 
   const GuideWrapper({
     super.key,
@@ -16,6 +17,7 @@ class GuideWrapper extends ConsumerWidget {
     required this.title,
     required this.description,
     this.alignment = Alignment.topRight,
+    this.id,
   });
 
   void _showGuideModal(BuildContext context) {

@@ -6,6 +6,7 @@ import '../../widgets/custom_drawer.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/floating_chat_button.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/guide_wrapper.dart';
 
 class FaqScreen extends StatefulWidget {
   const FaqScreen({super.key});
@@ -56,11 +57,16 @@ class _FaqScreenState extends State<FaqScreen> {
       drawer: CustomDrawer(),
       floatingActionButton: FloatingChatButton(),
       appBar: TopNavigationBar(
-        titleWidget: Text('preguntas_frecuentes'.tr(),
-          style: theme.textTheme.displayMedium?.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: AppColors.of(context).textoPrincipal,
+        titleWidget: GuideWrapper(
+          id: 'faq_title',
+          title: 'Preguntas Frecuentes',
+          description: 'Ofrecer una sección de preguntas frecuentes ayuda al usuario a resolver dudas de manera autónoma y rápida, reduciendo la carga de soporte al cliente.',
+          child: Text('preguntas_frecuentes'.tr(),
+            style: theme.textTheme.displayMedium?.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: AppColors.of(context).textoPrincipal,
+            ),
           ),
         ),
         leadingIcon: Icons.menu,
@@ -71,12 +77,16 @@ class _FaqScreenState extends State<FaqScreen> {
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(24, 24, 24, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.of(context).blanco,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.15)),
-              ),
+            child: GuideWrapper(
+              id: 'faq_search',
+              title: 'Buscador Predictivo',
+              description: 'Incluir una barra de búsqueda en las FAQ permite a los usuarios encontrar soluciones específicas sin tener que navegar por toda la lista, ahorrando tiempo y esfuerzo.',
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.of(context).blanco,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.15)),
+                ),
               child: TextField(
                 onChanged: (v) => setState(() {
                   _searchQuery = v;
@@ -93,6 +103,7 @@ class _FaqScreenState extends State<FaqScreen> {
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(vertical: 14),
                 ),
+              ),
               ),
             ),
           ),
@@ -212,19 +223,23 @@ class _FaqScreenState extends State<FaqScreen> {
 
   Widget _buildSupportCard(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.of(context).azulSistemas,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
+    return GuideWrapper(
+      id: 'faq_support_card',
+      title: 'Escalamiento de Soporte',
+      description: 'Ofrecer una opción clara para contactar a soporte al final de las FAQ garantiza que el usuario no se sienta abandonado si su duda no fue resuelta.',
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.of(context).azulSistemas,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('sigues_con_dudas'.tr(),
             style: theme.textTheme.displayMedium?.copyWith(
-              color: AppColors.of(context).blanco,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
@@ -233,7 +248,7 @@ class _FaqScreenState extends State<FaqScreen> {
           Text('nuestro_equipo_de_soporte_est_disponible'.tr(),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.of(context).blanco.withValues(alpha: 0.85),
+              color: Colors.white.withValues(alpha: 0.85),
               fontSize: 12,
               height: 1.4,
             ),
@@ -244,17 +259,30 @@ class _FaqScreenState extends State<FaqScreen> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.of(context).blanco,
+                color: theme.brightness == Brightness.dark 
+                    ? Colors.white.withValues(alpha: 0.15) 
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: theme.brightness == Brightness.dark 
+                    ? Border.all(color: Colors.white.withValues(alpha: 0.3)) 
+                    : null,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.chat_bubble_outline, color: AppColors.of(context).azulSistemas, size: 18),
+                  Icon(
+                    Icons.chat_bubble_outline, 
+                    color: theme.brightness == Brightness.dark 
+                        ? Colors.white 
+                        : AppColors.of(context).azulSistemas, 
+                    size: 18,
+                  ),
                   SizedBox(width: 8),
                   Text('contactar_con_soporte'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.of(context).azulSistemas,
+                      color: theme.brightness == Brightness.dark 
+                          ? Colors.white 
+                          : AppColors.of(context).azulSistemas,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -264,6 +292,7 @@ class _FaqScreenState extends State<FaqScreen> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -14,6 +14,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../models/cart_item.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
   final String productId;
@@ -79,8 +80,13 @@ class ProductDetailScreen extends ConsumerWidget {
         leadingIcon: Icons.arrow_back_ios_new, // Flecha iOS como en el diseño
         onLeadingPressed: () => context.pop(),
         actionIcon: isFavorite ? Icons.favorite : Icons.favorite_border,
-        onActionPressed: () =>
-            ref.read(wishlistProvider.notifier).toggleProduct(productId),
+        onActionPressed: () {
+          final isAdding = !wishlistIds.contains(productId);
+          ref.read(wishlistProvider.notifier).toggleProduct(productId);
+          if (isAdding) {
+            CustomNotification.show(context, message: '${product.title} añadido a favoritos', type: NotificationType.success);
+          }
+        },
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -134,19 +140,24 @@ class ProductDetailScreen extends ConsumerWidget {
                         color: AppColors.of(context).azulSistemas,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.zoom_in,
-                          color: AppColors.of(context).blanco,
-                          size: 22,
+                      child: GuideWrapper(
+                        id: 'detail_zoom',
+                        title: 'Reducción de incertidumbre',
+                        description: 'Permitir visualizar el producto en detalle reduce la fricción en la decisión de compra, ya que compensa la imposibilidad física de examinar el producto.',
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.zoom_in,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          onPressed: () => _openImageZoom(
+                            context,
+                            product.imageUrl.isNotEmpty
+                                ? product.imageUrl
+                                : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
+                          ),
+                          padding: EdgeInsets.zero,
                         ),
-                        onPressed: () => _openImageZoom(
-                          context,
-                          product.imageUrl.isNotEmpty
-                              ? product.imageUrl
-                              : 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80',
-                        ),
-                        padding: EdgeInsets.zero,
                       ),
                     ),
                   ),
@@ -261,13 +272,7 @@ class ProductDetailScreen extends ConsumerWidget {
                                 : 0.0,
                           ),
                         );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('anadido_al_carrito'.tr(args: [product.title])),
-                        behavior: SnackBarBehavior.floating,
-                        backgroundColor: AppColors.of(context).azulSistemas,
-                      ),
-                    );
+                    CustomNotification.show(context, message: '${product.title} ${'anadido_al_carrito'.tr()}', type: NotificationType.success);
                   },
                 ),
               ),
@@ -287,11 +292,16 @@ class ProductDetailScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('especificaciones_tcnicas'.tr(),
-                      style: theme.textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: AppColors.of(context).textoPrincipal,
+                    GuideWrapper(
+                      id: 'product_detail_specs',
+                      title: 'Transparencia de Información',
+                      description: 'Mostrar especificaciones técnicas completas y organizadas construye confianza y reduce la incertidumbre del usuario, lo que disminuye las devoluciones y aumenta la conversión.',
+                      child: Text('especificaciones_tcnicas'.tr(),
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: AppColors.of(context).textoPrincipal,
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -310,7 +320,7 @@ class ProductDetailScreen extends ConsumerWidget {
                       _buildSpecRow(context, 'Categoría principal', getCategoryName(product.category)),
                       if (product.categories.length > 1)
                         _buildSpecRow(context, 
-                          'Otras categorías',
+                          'otras_categorías'.tr(),
                           product.categories.skip(1).map(getCategoryName).join(', '),
                         ),
                       _buildSpecRow(context, 
@@ -325,6 +335,7 @@ class ProductDetailScreen extends ConsumerWidget {
             ),
 
             // Reseñas
+            SizedBox(height: 24),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -335,11 +346,16 @@ class ProductDetailScreen extends ConsumerWidget {
                     children: [
                       Row(
                         children: [
-                          Text('reseas'.tr(),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              color: AppColors.of(context).azulSistemas,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          GuideWrapper(
+                            id: 'product_detail_reviews',
+                            title: 'Social Proof (Prueba Social)',
+                            description: 'Las reseñas de otros usuarios son uno de los factores más influyentes en la decisión de compra. El "Social Proof" valida la calidad del producto y genera confianza instantánea.',
+                            child: Text('reseas'.tr(),
+                              style: theme.textTheme.displayMedium?.copyWith(
+                                color: AppColors.of(context).azulSistemas,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           SizedBox(width: 8),
@@ -975,23 +991,11 @@ class ProductDetailScreen extends ConsumerWidget {
                           ? null
                           : () async {
                               if (selectedRating == 0) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('por_favor_selecciona_una_calificacin'.tr(),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
+                                CustomNotification.show(context, message: 'por_favor_selecciona_una_calificacin'.tr(), type: NotificationType.info);
                                 return;
                               }
                               if (commentController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('por_favor_escribe_un_comentario'.tr(),
-                                    ),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
+                                CustomNotification.show(context, message: 'por_favor_escribe_un_comentario'.tr(), type: NotificationType.info);
                                 return;
                               }
                               setSheetState(() => isSubmitting = true);
@@ -1009,25 +1013,12 @@ class ProductDetailScreen extends ConsumerWidget {
                                 );
                                 if (ctx.mounted) Navigator.of(ctx).pop();
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('resea_publicada_gracias_por_tu_opinin'.tr(),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: AppColors.of(context).verdeSaman,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'resea_publicada_gracias_por_tu_opinin'.tr(), type: NotificationType.success);
                                 }
                               } catch (e) {
                                 setSheetState(() => isSubmitting = false);
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Error al publicar: $e'),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'Error al publicar: $e', type: NotificationType.error);
                                 }
                               }
                             },

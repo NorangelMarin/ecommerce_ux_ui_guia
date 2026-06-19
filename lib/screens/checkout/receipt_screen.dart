@@ -17,7 +17,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 class ReceiptScreen extends ConsumerWidget {
   final String? orderId;
-  const ReceiptScreen({super.key, this.orderId});
+  final bool fromCheckout;
+  const ReceiptScreen({super.key, this.orderId, this.fromCheckout = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,10 +28,10 @@ class ReceiptScreen extends ConsumerWidget {
     // Utilizamos PopScope para interceptar el botón "Atrás" de Android
     // y redirigir al usuario al inicio, dado que el carrito ya está vacío.
     return PopScope(
-      canPop: false,
+      canPop: !fromCheckout,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        context.go('/home');
+        if (fromCheckout) context.go('/home');
       },
       child: Scaffold(
         backgroundColor: AppColors.of(context).fondoPrincipal,
@@ -44,8 +45,14 @@ class ReceiptScreen extends ConsumerWidget {
               color: AppColors.of(context).textoPrincipal,
             ),
           ),
-          leadingIcon: Icons.menu,
-          onLeadingPressed: null,
+          leadingIcon: fromCheckout ? Icons.menu : Icons.arrow_back_ios_new,
+          onLeadingPressed: fromCheckout ? null : () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/history');
+            }
+          },
           showActionIcon: false,
         ),
         body: SingleChildScrollView(
@@ -85,7 +92,6 @@ class ReceiptScreen extends ConsumerWidget {
                       title: 'retroalimentacion_del_sistema'.tr(),
                       description:
                           'Proporcionar una respuesta visual clara y positiva tras una acción crítica (como un pago) confirma el éxito de la tarea, reduciendo la ansiedad y brindando tranquilidad al usuario.',
-                      alignment: Alignment.centerRight,
                       child: Container(
                         width: 100,
                         height: 100,
@@ -389,12 +395,17 @@ class ReceiptScreen extends ConsumerWidget {
             child: SizedBox(
               width: 48,
               height: 48,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[200]),
-              ),
+              child: imageUrl.startsWith('assets/')
+                  ? Image.asset(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200]),
+                    )
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200]),
+                    ),
             ),
           ),
           SizedBox(width: 12),

@@ -13,6 +13,7 @@ import '../../theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -55,17 +56,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         final bytes = await pickedFile.readAsBytes();
         await ref.read(authRepositoryProvider).updateProfileImage(bytes);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('foto_actualizada_exitosamente'.tr())),
-          );
+          CustomNotification.show(context, message: 'foto_actualizada_exitosamente'.tr(), type: NotificationType.info);
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('error_al_subir_foto'.tr(args: [e.toString()])),
-            ),
-          );
+          CustomNotification.show(context, message: 'error_al_subir_foto'.tr(args: [e.toString()]), type: NotificationType.error);
         }
       } finally {
         if (mounted) {
@@ -80,12 +75,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _saveProfile() async {
     final phoneDigits = _phoneController.text.trim();
     if (phoneDigits.length != 7) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('el_nmero_de_telfono_debe_tener_7'.tr()),
-          backgroundColor: AppColors.of(context).error,
-        ),
-      );
+      CustomNotification.show(context, message: 'el_nmero_de_telfono_debe_tener_7'.tr(), type: NotificationType.info);
       return;
     }
     
@@ -105,19 +95,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         setState(() {
           _isEditing = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('perfil_guardado_con_éxito'.tr()),
-            backgroundColor: AppColors.of(context).exito,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        CustomNotification.show(context, message: 'perfil_guardado_con_éxito'.tr(), type: NotificationType.success);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error_general'.tr(args: [e.toString()]))),
-        );
+        CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
       }
     } finally {
       if (mounted) {
@@ -178,23 +160,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               .read(authRepositoryProvider)
                               .sendPasswordReset();
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'correo_de_recuperación_enviado'.tr(),
-                                ),
-                              ),
-                            );
+                            CustomNotification.show(context, message: 'correo_de_recuperación_enviado'.tr(), type: NotificationType.info);
                           }
                         } catch (e) {
                           if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'error_general'.tr(args: [e.toString()]),
-                                ),
-                              ),
-                            );
+                            CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
                           }
                         }
                       },
@@ -237,13 +207,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 );
                             if (ctx.mounted) {
                               Navigator.pop(ctx);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'contraseña_cambiada_con_éxito'.tr(),
-                                  ),
-                                ),
-                              );
+                              CustomNotification.show(context, message: 'contraseña_cambiada_con_éxito'.tr(), type: NotificationType.success);
                             }
                           } catch (e) {
                             setStateDialog(() {
@@ -252,7 +216,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             if (ctx.mounted) {
                               ScaffoldMessenger.of(
                                 context,
-                              ).showSnackBar(SnackBar(content: Text('$e')));
+                              );
+CustomNotification.show(context, message: '$e', type: NotificationType.error);
                             }
                           }
                         },
@@ -363,6 +328,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             // Foto de Perfil
             GuideWrapper(
+              id: 'profile_photo',
               title: 'personalización'.tr(),
               description:
                   'Permitir subir una foto de perfil refuerza la identidad y compromiso del usuario (engagement), al mismo tiempo que proporciona un feedback visual inmediato de su cuenta.',
@@ -459,6 +425,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: 40),
 
             GuideWrapper(
+              id: 'profile_editable_data',
               title: 'prevención_de_errores_y_control'.tr(),
               description:
                   'Hacer que los datos obligatorios (como el teléfono) sean editables directamente aquí otorga flexibilidad al usuario y previene abandonos del carrito por falta de información vital.',
@@ -474,13 +441,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextButton(
+                      OutlinedButton.icon(
                         onPressed: () => setState(() {
                           _isEditing = !_isEditing;
                         }),
-                        child: Text(
+                        icon: Icon(
+                          _isEditing ? Icons.close : Icons.edit_outlined,
+                          size: 16,
+                          color: AppColors.of(context).naranjaUnimet,
+                        ),
+                        label: Text(
                           _isEditing ? 'cancelar'.tr() : 'editar'.tr(),
-                          style: TextStyle(color: AppColors.of(context).naranjaUnimet),
+                          style: TextStyle(
+                            color: AppColors.of(context).naranjaUnimet,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          minimumSize: Size(0, 36),
                         ),
                       ),
                     ],
@@ -554,6 +537,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
             // Seguridad de la cuenta
             GuideWrapper(
+              id: 'profile_security',
               title: 'confianza_y_autonomía'.tr(),
               description:
                   'Centralizar los ajustes de seguridad transmite profesionalismo al usuario. Darle la libertad de gestionar su contraseña o ver opciones como el 2FA mejora drásticamente la percepción de seguridad del sistema.',

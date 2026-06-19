@@ -17,6 +17,7 @@ import '../../providers/cart_provider.dart';
 import 'payment_method_screen.dart' show CheckoutData;
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class ConfirmationScreen extends ConsumerStatefulWidget {
   final CheckoutData? checkoutData;
@@ -108,52 +109,45 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
 
                   SizedBox(height: 24),
 
-                  GuideWrapper(
-                    title: 'prevención_de_errores_nielsen'.tr(),
-                    description:
-                        'Exigir un paso final de confirmación con un botón claro previene compras accidentales y da al usuario el control final sobre su transacción.',
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: CustomButton(
-                        text: _isProcessing
-                            ? 'procesando'.tr()
-                            : 'confirmar_pago'.tr(),
-                        color: ButtonColor.naranja,
-                        icon: Icons.chevron_right,
-                        onPressed: _isProcessing
-                            ? null
-                            : () async {
-                                final cartItems = ref.read(cartProvider);
-                                if (cartItems.isEmpty) return;
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: CustomButton(
+                      text: _isProcessing
+                          ? 'procesando'.tr()
+                          : 'confirmar_pago'.tr(),
+                      color: ButtonColor.naranja,
+                      icon: Icons.chevron_right,
+                      onPressed: _isProcessing
+                          ? null
+                          : () async {
+                              final cartItems = ref.read(cartProvider);
+                              if (cartItems.isEmpty) return;
 
-                                final cd = widget.checkoutData;
+                              final cd = widget.checkoutData;
 
-                                // -- Resolver dirección --
-                                Address? resolvedAddress;
-                                if (cd?.addressData.newAddress != null) {
-                                  resolvedAddress = cd!.addressData.newAddress;
-                                } else if (cd?.addressData.addressId != null) {
-                                  final addresses =
-                                      ref.read(userAddressesProvider).value ??
-                                      [];
-                                  resolvedAddress = addresses
-                                      .cast<Address?>()
-                                      .firstWhere(
-                                        (a) =>
-                                            a?.id == cd!.addressData.addressId,
-                                        orElse: () => null,
-                                      );
-                                }
-                                resolvedAddress ??=
-                                    (ref.read(userAddressesProvider).value ??
-                                            [])
-                                        .cast<Address?>()
-                                        .isNotEmpty
-                                    ? (ref.read(userAddressesProvider).value ??
+                              // -- Resolver dirección --
+                              Address? resolvedAddress;
+                              if (cd?.addressData.newAddress != null) {
+                                resolvedAddress = cd!.addressData.newAddress;
+                              } else if (cd?.addressData.addressId != null) {
+                                final addresses =
+                                    ref.read(userAddressesProvider).value ??
+                                    [];
+                                resolvedAddress = addresses
+                                    .cast<Address?>()
+                                    .firstWhere(
+                                      (a) =>
+                                          a?.id == cd!.addressData.addressId,
+                                      orElse: () => null,
+                                    );
+                              }
+                              resolvedAddress ??=
+                                  (ref.read(userAddressesProvider).value ?? [])
+                                          .isNotEmpty
+                                      ? (ref.read(userAddressesProvider).value ??
                                               [])
                                           .first
-                                    : null;
+                                      : null;
 
                                 // -- Resolver método de pago --
                                 PaymentMethod? resolvedPm;
@@ -183,15 +177,8 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
 
                                 if (resolvedAddress == null ||
                                     (resolvedPm == null && !isNonCard)) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
-                                            .tr(),
-                                      ),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
+                                  CustomNotification.show(context, message: 'revisa_tu_direccin_de_envo_y_mtodo_de_pa'
+                                            .tr(), type: NotificationType.error);
                                   return;
                                 }
 
@@ -228,7 +215,7 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                                           resolvedPm?.toMap() ??
                                           {'type': cd?.paymentData.methodType},
                                       createdAt: DateTime.now(),
-                                      status: 'pago_confirmado'.tr(),
+                                      status: 'Pago confirmado',
                                     );
 
                                     final orderId = await ref
@@ -241,15 +228,12 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                                     if (!context.mounted) return;
                                     context.pushReplacement(
                                       '/receipt/$orderId',
+                                      extra: true,
                                     );
                                   }
                                 } catch (e) {
                                   if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error al procesar: $e'),
-                                      ),
-                                    );
+                                  CustomNotification.show(context, message: 'Error al procesar: $e', type: NotificationType.error);
                                 } finally {
                                   if (mounted) {
                                     setState(() => _isProcessing = false);
@@ -258,7 +242,6 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
                               },
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -497,6 +480,7 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
     }
 
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,
@@ -583,6 +567,7 @@ class _ConfirmationScreenState extends ConsumerState<ConfirmationScreen> {
     if (methodType == 'mobile') nonCardLabel = 'pago_movil'.tr();
 
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.of(context).fondoTarjetas,

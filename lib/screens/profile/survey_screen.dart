@@ -10,6 +10,7 @@ import '../../providers/order_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class SurveyScreen extends ConsumerStatefulWidget {
   final String? orderId;
@@ -33,9 +34,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
 
   Future<void> _submitSurvey(String uid) async {
     if (_selectedRating == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('por_favor_selecciona_una_valoración'.tr())),
-      );
+      CustomNotification.show(context, message: 'por_favor_selecciona_una_valoración'.tr(), type: NotificationType.info);
       return;
     }
 
@@ -53,19 +52,12 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('gracias_por_tu_opinión'.tr()),
-            backgroundColor: AppColors.of(context).verdeSaman,
-          ),
-        );
+        CustomNotification.show(context, message: 'gracias_por_tu_opinión'.tr(), type: NotificationType.success);
         // Podríamos navegar al inicio o simplemente dejar que el stream actualice la UI
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al enviar: $e')),
-        );
+        CustomNotification.show(context, message: 'Error al enviar: $e', type: NotificationType.error);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -165,10 +157,10 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
             ),
           ),
           SizedBox(height: 16),
-          Text('tu_pedido_ha_sidonentregado'.tr(),
+          Text('tu_pedido_ha_sido_entregado'.tr(),
             textAlign: TextAlign.center,
             style: theme.textTheme.displayMedium?.copyWith(
-              color: AppColors.of(context).blanco,
+              color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 22,
               height: 1.2,
@@ -178,7 +170,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
           Text('han_confirmado_la_recepcin_del_pedido'.tr(),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.of(context).blanco.withValues(alpha: 0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 12,
             ),
           ),
@@ -201,53 +193,54 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GuideWrapper(
-            title: 'recolección_de_feedback'.tr(),
-            description: 'Conocer la opinión del usuario permite iterar sobre el producto. El NPS (Net Promoter Score) es una métrica clave en e-commerce.',
-            child: Text(
-              hasSubmitted ? 'Tu valoración enviada:' : '¿Cómo valoras el servicio recibido?',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: AppColors.of(context).textoPrincipal,
-              ),
+          Text(
+            hasSubmitted ? 'Tu valoración enviada:' : '¿Cómo valoras el servicio recibido?',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: AppColors.of(context).textoPrincipal,
             ),
           ),
           SizedBox(height: 24),
           
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildRatingButton(
-                index: 0,
-                label: 'malo'.tr(),
-                icon: Icons.sentiment_very_dissatisfied,
-                iconColor: Colors.red[600]!,
-                disabled: hasSubmitted,
-              ),
-              _buildRatingButton(
-                index: 1,
-                label: 'normal'.tr(),
-                icon: Icons.sentiment_neutral,
-                iconColor: AppColors.of(context).azulSistemas,
-                disabled: hasSubmitted,
-              ),
-              _buildRatingButton(
-                index: 2,
-                label: 'bueno'.tr(),
-                icon: Icons.sentiment_satisfied,
-                iconColor: Colors.amber[500]!,
-                disabled: hasSubmitted,
-              ),
-              _buildRatingButton(
-                index: 3,
-                label: 'excelente'.tr(),
-                icon: Icons.sentiment_very_satisfied,
-                iconColor: Colors.green[600]!,
-                disabled: hasSubmitted,
-              ),
-            ],
+          GuideWrapper(
+            id: 'survey_options',
+            title: 'recolección_de_feedback'.tr(),
+            description: 'Conocer la opinión del usuario permite iterar sobre el producto. El NPS (Net Promoter Score) es una métrica clave en e-commerce.',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildRatingButton(
+                  index: 0,
+                  label: 'malo'.tr(),
+                  icon: Icons.sentiment_very_dissatisfied,
+                  iconColor: Colors.red[600]!,
+                  disabled: hasSubmitted,
+                ),
+                _buildRatingButton(
+                  index: 1,
+                  label: 'normal'.tr(),
+                  icon: Icons.sentiment_neutral,
+                  iconColor: AppColors.of(context).azulSistemas,
+                  disabled: hasSubmitted,
+                ),
+                _buildRatingButton(
+                  index: 2,
+                  label: 'bueno'.tr(),
+                  icon: Icons.sentiment_satisfied,
+                  iconColor: Colors.amber[500]!,
+                  disabled: hasSubmitted,
+                ),
+                _buildRatingButton(
+                  index: 3,
+                  label: 'excelente'.tr(),
+                  icon: Icons.sentiment_very_satisfied,
+                  iconColor: Colors.green[600]!,
+                  disabled: hasSubmitted,
+                ),
+              ],
+            ),
           ),
           
           SizedBox(height: 32),
@@ -256,7 +249,7 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
             hasSubmitted ? 'Tus observaciones:' : '¿Quieres añadir alguna observación?',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 12,
-              color: AppColors.of(context).sombras,
+              color: AppColors.of(context).textoPrincipal,
             ),
           ),
           SizedBox(height: 16),
@@ -346,8 +339,8 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 10,
+              color: isSelected ? AppColors.of(context).textoPrincipal : AppColors.of(context).textoSecundario,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? AppColors.of(context).naranjaUnimet : AppColors.of(context).sombras,
             ),
           ),
         ],

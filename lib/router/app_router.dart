@@ -55,12 +55,19 @@ final appRouter = GoRouter(
       final checkoutData = state.extra as dynamic;
       return ConfirmationScreen(checkoutData: checkoutData);
     }),
-    GoRoute(path: '/receipt', builder: (context, state) => ReceiptScreen()),
+    GoRoute(
+      path: '/receipt', 
+      builder: (context, state) {
+        final fromCheckout = state.extra as bool? ?? true;
+        return ReceiptScreen(fromCheckout: fromCheckout);
+      }
+    ),
     GoRoute(
       path: '/receipt/:id', 
       builder: (context, state) {
         final id = state.pathParameters['id'];
-        return ReceiptScreen(orderId: id);
+        final fromCheckout = state.extra as bool? ?? false;
+        return ReceiptScreen(orderId: id, fromCheckout: fromCheckout);
       }
     ),
     GoRoute(path: '/order_status', builder: (context, state) => OrderStatusScreen()),

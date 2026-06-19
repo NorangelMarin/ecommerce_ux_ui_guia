@@ -8,6 +8,7 @@ import '../../theme/app_colors.dart';
 import '../../widgets/floating_chat_button.dart';
 import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../../widgets/custom_notification.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -78,6 +79,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
             // Gestión de pedidos
             GuideWrapper(
+              id: 'support_policies',
               title: 'divulgación_progresiva'.tr(),
               description: 'Utilizar un diseño de acordeón para las políticas extensas evita la sobrecarga visual. El usuario solo lee lo que necesita cuando lo necesita.',
               child: Column(
@@ -118,6 +120,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
             // Canales de comunicación
             GuideWrapper(
+              id: 'support_channels',
               title: 'confianza_y_accesibilidad'.tr(),
               description: 'Mostrar canales de contacto directos (WhatsApp y Llamada) con tiempos de respuesta o disponibilidad (ej: 8am - 5pm) reduce la ansiedad del usuario y genera confianza en la plataforma.',
               child: Column(
@@ -145,7 +148,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('no_se_pudo_abrir_whatsapp'.tr())));
+                          CustomNotification.show(context, message: 'no_se_pudo_abrir_whatsapp'.tr(), type: NotificationType.info);
                         }
                       }
                     },
@@ -165,7 +168,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         await launchUrl(url, mode: LaunchMode.externalApplication);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('no_se_pudo_abrir_la'.tr())));
+                          CustomNotification.show(context, message: 'no_se_pudo_abrir_la'.tr(), type: NotificationType.info);
                         }
                       }
                     },
@@ -177,6 +180,7 @@ class _SupportScreenState extends State<SupportScreen> {
             SizedBox(height: 32),
 
             GuideWrapper(
+              id: 'support_faq',
               title: 'autoservicio_proactivo'.tr(),
               description: 'Destacar visualmente las Preguntas Frecuentes empodera a los usuarios a encontrar respuestas por sí mismos y disminuye drásticamente el volumen de tickets de soporte.',
               child: Container(
