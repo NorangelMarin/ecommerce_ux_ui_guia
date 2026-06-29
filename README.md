@@ -14,9 +14,9 @@ El desarrollo conceptual y visual se rigió estrictamente bajo la metodología *
 
 ### Paleta de Colores Corporativa
 Inspirada cromáticamente en los colores institucionales de la Universidad Metropolitana y la Facultad de Ingeniería, estableciendo un sentido de pertenencia y profesionalismo académico. El esquema de colores utiliza un alto contraste para favorecer la accesibilidad visual:
-- 🔵 **Azul Sistemas (`#003087`):** Color principal, utilizado en fondos institucionales, botones de acción primarios y la estructura de navegación.
-- 🟠 **Naranja Unimet (`#F37021`):** Color de acento. Utilizado para notificaciones, llamados a la acción (CTAs) y elementos interactivos clave.
-- 🟢 **Verde Samán (`#2E7D32`):** Color semántico. Usado en estados de éxito y confirmaciones.
+- 🟠 **Naranja Unimet (`#F37021`):** Color principal. Utilizado para llamados a la acción (CTAs) y elementos interactivos clave.
+- 🔵 **Azul Sistemas (`#003087`):** Color secundario, utilizado en fondos institucionales y la estructura de navegación.
+- 🟢 **Verde Samán (`#2E7D32`):** Color semántico y de acento. Usado en notificaciones, estados de éxito y confirmaciones.
 
 ### El Icono de la Aplicación
 El desarrollo del icono nativo atravesó un proceso riguroso de diseño plano (Flat Design):
@@ -24,50 +24,18 @@ El desarrollo del icono nativo atravesó un proceso riguroso de diseño plano (F
 
 ---
 
-## 📱 Visual Showcase (Capturas de Pantalla)
+## 📱 Visual Showcase (Pantallas Principales)
 
 <div align="center">
-  <img src="./assets/readme/Registro.png" alt="Pantalla de Registro" width="250"/>
-  &nbsp;&nbsp;&nbsp;
   <img src="./assets/readme/Acceso.png" alt="Pantalla de Acceso" width="250"/>
   &nbsp;&nbsp;&nbsp;
   <img src="./assets/readme/Inicio.png" alt="Pantalla de Inicio" width="250"/>
   &nbsp;&nbsp;&nbsp;
   <img src="./assets/readme/Menu.png" alt="Menú Lateral" width="250"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Perfil.png" alt="Pantalla de Perfil" width="250"/>
-  &nbsp;&nbsp;&nbsp;
   <img src="./assets/readme/Catalogo.png" alt="Pantalla de Catálogo" width="250"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Detalle del producto.png" alt="Pantalla de detalle del producto" width="250"/>
-  &nbsp;&nbsp;&nbsp;
   <img src="./assets/readme/Carrito de compra.png" alt="Pantalla de Carrito" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Dirección de pago.png" alt="Pantalla de selección dirreción del pago" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Método de pago.png" alt="Pantalla de selección de método de pago" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Confirmación de pago.png" alt="Pantalla de confirmación de pago" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Comprobante de pago.png" alt="Pantalla de confirmación de pago" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Estado del pedido.png" alt="Pantalla de estado del pedido" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Encuesta de satisfacción.png" alt="Pantalla de encuesta de satisfacción" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Historial de compras.png" alt="Pantalla de Historial" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Mis direcciones.png" alt="Pantalla de Direcciones" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Mis métodos de pago.png" alt="Pantalla de Métodos de Pago" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/deseos.jpg" alt="Pantalla de Lista de Deseos" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Soporte.png" alt="Pantalla de Soporte al usuario" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Preguntas frecuentes.png" alt="Pantalla de Preguntas Frecuentes" width="250"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Accesibilidad.png" alt="Accesibilidad Visual" width="250"/>
 </div>
 
 ---
