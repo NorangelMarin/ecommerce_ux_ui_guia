@@ -15,7 +15,7 @@ El desarrollo conceptual y visual se rigió estrictamente bajo la metodología *
 ### Paleta de Colores Corporativa
 Inspirada cromáticamente en los colores institucionales de la Universidad Metropolitana y la Facultad de Ingeniería, estableciendo un sentido de pertenencia y profesionalismo académico. El esquema de colores utiliza un alto contraste para favorecer la accesibilidad visual:
 - 🟠 **Naranja Unimet (`#F37021`):** Color principal. Utilizado para llamados a la acción (CTAs) y elementos interactivos clave.
-- 🔵 **Azul Sistemas (`#003087`):** Color secundario, utilizado en fondos institucionales y la estructura de navegación.
+- 🔵 **Azul Sistemas (`#003087`):** Color secundario, utilizado en botones, iconos y en la selección de elementos.
 - 🟢 **Verde Samán (`#2E7D32`):** Color semántico y de acento. Usado en notificaciones, estados de éxito y confirmaciones.
 
 ### El Icono de la Aplicación
@@ -27,15 +27,15 @@ El desarrollo del icono nativo atravesó un proceso riguroso de diseño plano (F
 ## 📱 Visual Showcase (Pantallas Principales)
 
 <div align="center">
-  <img src="./assets/readme/Acceso.png" alt="Pantalla de Acceso" width="250"/>
+  <img src="./assets/readme/Acceso.png" alt="Pantalla de Acceso" width="200"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Inicio.png" alt="Pantalla de Inicio" width="250"/>
+  <img src="./assets/readme/Inicio.png" alt="Pantalla de Inicio" width="200"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Menu.png" alt="Menú Lateral" width="250"/>
+  <img src="./assets/readme/Menu.png" alt="Menú Lateral" width="200"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Catalogo.png" alt="Pantalla de Catálogo" width="250"/>
+  <img src="./assets/readme/Catalogo.png" alt="Pantalla de Catálogo" width="200"/>
   &nbsp;&nbsp;&nbsp;
-  <img src="./assets/readme/Carrito de compra.png" alt="Pantalla de Carrito" width="250"/>
+  <img src="./assets/readme/Carrito de compra.png" alt="Pantalla de Carrito" width="200"/>
 </div>
 
 ---
