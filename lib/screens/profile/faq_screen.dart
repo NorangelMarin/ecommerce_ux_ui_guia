@@ -7,6 +7,8 @@ import '../../theme/app_colors.dart';
 import '../../widgets/floating_chat_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../widgets/guide_wrapper.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../widgets/custom_notification.dart';
 
 class FaqScreen extends StatefulWidget {
   const FaqScreen({super.key});
@@ -18,6 +20,59 @@ class FaqScreen extends StatefulWidget {
 class _FaqScreenState extends State<FaqScreen> {
   int? _expandedIndex;
   String _searchQuery = '';
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) {
+          if (val == 'done' || val == 'notListening') {
+            if (mounted) setState(() => _isListening = false);
+          }
+        },
+        onError: (val) => debugPrint('onError: $val'),
+      );
+      if (available) {
+        if (mounted) {
+          setState(() => _isListening = true);
+          CustomNotification.show(
+            context,
+            message: 'Escuchando... Dinos cuál es tu duda',
+            type: NotificationType.info,
+          );
+        }
+        _speech.listen(
+          onResult: (val) {
+            if (mounted) {
+              setState(() {
+                _searchController.text = val.recognizedWords;
+                _searchQuery = val.recognizedWords;
+                _expandedIndex = null;
+              });
+            }
+          },
+          localeId: 'es_ES',
+        );
+      }
+    } else {
+      if (mounted) setState(() => _isListening = false);
+      _speech.stop();
+    }
+  }
 
   final List<Map<String, String>> _faqs = [
     {
@@ -88,6 +143,7 @@ class _FaqScreenState extends State<FaqScreen> {
                   border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.15)),
                 ),
               child: TextField(
+                controller: _searchController,
                 onChanged: (v) => setState(() {
                   _searchQuery = v;
                   _expandedIndex = null;
@@ -100,6 +156,16 @@ class _FaqScreenState extends State<FaqScreen> {
                     fontSize: 13,
                   ),
                   prefixIcon: Icon(Icons.search, color: AppColors.of(context).sombras, size: 20),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isListening ? Icons.mic : Icons.mic_none,
+                      color: _isListening
+                          ? AppColors.of(context).naranjaUnimet
+                          : AppColors.of(context).sombras,
+                      size: 20,
+                    ),
+                    onPressed: _listen,
+                  ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(vertical: 14),
                 ),

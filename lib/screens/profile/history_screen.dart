@@ -70,7 +70,9 @@ class HistoryScreen extends ConsumerWidget {
       ),
       body: ordersAsync.when(
         loading: () => Center(
-          child: CircularProgressIndicator(color: AppColors.of(context).naranjaUnimet),
+          child: CircularProgressIndicator(
+            color: AppColors.of(context).naranjaUnimet,
+          ),
         ),
         error: (err, stack) => Center(child: Text('Error: $err')),
         data: (orders) {
@@ -108,22 +110,26 @@ class HistoryScreen extends ConsumerWidget {
                       SizedBox(width: 16),
                       Expanded(
                         child: Divider(
-                          color: AppColors.of(context).sombras.withValues(alpha: 0.2),
+                          color: AppColors.of(
+                            context,
+                          ).sombras.withValues(alpha: 0.2),
                           thickness: 1,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 12),
-                  ...groupOrdersList.asMap().entries.map(
-                    (entry) {
-                      final isFirst = groupIndex == 0 && entry.key == 0;
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 12),
-                        child: _buildOrderCard(context, entry.value, isFirst: isFirst),
-                      );
-                    },
-                  ),
+                  ...groupOrdersList.asMap().entries.map((entry) {
+                    final isFirst = groupIndex == 0 && entry.key == 0;
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: _buildOrderCard(
+                        context,
+                        entry.value,
+                        isFirst: isFirst,
+                      ),
+                    );
+                  }),
                   SizedBox(height: 8),
                 ],
               );
@@ -143,7 +149,11 @@ class HistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderCard(BuildContext context, OrderModel order, {bool isFirst = false}) {
+  Widget _buildOrderCard(
+    BuildContext context,
+    OrderModel order, {
+    bool isFirst = false,
+  }) {
     final theme = Theme.of(context);
 
     String statusColorKey = 'gray';
@@ -151,14 +161,15 @@ class HistoryScreen extends ConsumerWidget {
 
     if (st.contains('pago') || st.contains('confirmado')) {
       statusColorKey = 'green';
-    } else if (st.contains('enviado'))
+    } else if (st.contains('enviado')) {
       statusColorKey = 'blue';
-    else if (st.contains('entregado'))
+    } else if (st.contains('entregado')) {
       statusColorKey = 'green';
-    else if (st.contains('preparación') || st.contains('preparando'))
+    } else if (st.contains('preparación') || st.contains('preparando')) {
       statusColorKey = 'orange';
-    else
+    } else {
       statusColorKey = 'gray';
+    }
 
     final statusColor = _getStatusColor(context, statusColorKey);
 
@@ -172,7 +183,9 @@ class HistoryScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: AppColors.of(context).blanco,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.of(context).sombras.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: AppColors.of(context).sombras.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +198,9 @@ class HistoryScreen extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.of(context).naranjaUnimet.withValues(alpha: 0.12),
+                  color: AppColors.of(
+                    context,
+                  ).naranjaUnimet.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -231,7 +246,10 @@ class HistoryScreen extends ConsumerWidget {
             child: OutlinedButton(
               onPressed: () => context.push('/receipt/${order.id}'),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: AppColors.of(context).naranjaUnimet, width: 1.5),
+                side: BorderSide(
+                  color: AppColors.of(context).naranjaUnimet,
+                  width: 1.5,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -265,15 +283,18 @@ class HistoryScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildStatusBadge(BuildContext context, ThemeData theme, OrderModel order, Color statusColor) {
+  Widget _buildStatusBadge(
+    BuildContext context,
+    ThemeData theme,
+    OrderModel order,
+    Color statusColor,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: statusColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         translateStatus(order.status).toUpperCase(),

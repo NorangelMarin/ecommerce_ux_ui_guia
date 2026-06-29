@@ -13,7 +13,6 @@ import '../../widgets/custom_drawer.dart';
 import '../../providers/address_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/address.dart';
-import '../../widgets/guide_wrapper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../widgets/custom_notification.dart';
 
@@ -101,7 +100,11 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
           errorMessage = 'El GPS está desactivado en tu dispositivo.';
         }
 
-        CustomNotification.show(context, message: errorMessage, type: NotificationType.error);
+        CustomNotification.show(
+          context,
+          message: errorMessage,
+          type: NotificationType.error,
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -109,7 +112,11 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
         if (e is Exception) {
           errorMessage = e.toString().replaceFirst('Exception: ', '');
         }
-        CustomNotification.show(context, message: errorMessage, type: NotificationType.error);
+        CustomNotification.show(
+          context,
+          message: errorMessage,
+          type: NotificationType.error,
+        );
       }
     } finally {
       if (mounted) {
@@ -232,7 +239,9 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                         label: Text('usar_mi_ubicación_actual'.tr()),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.of(context).naranjaUnimet,
-                          side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                          side: BorderSide(
+                            color: AppColors.of(context).naranjaUnimet,
+                          ),
                           padding: EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -337,7 +346,12 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                                   (addresses.isEmpty ? 'nueva' : null);
 
                               if (currentSelection == null) {
-                                CustomNotification.show(context, message: 'por_favor_selecciona_una_direccin'.tr(), type: NotificationType.info);
+                                CustomNotification.show(
+                                  context,
+                                  message: 'por_favor_selecciona_una_direccin'
+                                      .tr(),
+                                  type: NotificationType.info,
+                                );
                                 return;
                               }
 
@@ -349,15 +363,25 @@ class _ShippingScreenState extends ConsumerState<ShippingScreen> {
                                     _urbanizacionController.text
                                         .trim()
                                         .isEmpty) {
-                                  CustomNotification.show(context, message: 'por_favor_completa_todos_los_campos_de_l'
-                                            .tr(), type: NotificationType.error);
+                                  CustomNotification.show(
+                                    context,
+                                    message:
+                                        'por_favor_completa_todos_los_campos_de_l'
+                                            .tr(),
+                                    type: NotificationType.error,
+                                  );
                                   return;
                                 }
 
                                 if (_saveAddress &&
                                     _aliasController.text.trim().isEmpty) {
-                                  CustomNotification.show(context, message: 'por_favor_ingresa_un_alias_para_guardar'
-                                            .tr(), type: NotificationType.error);
+                                  CustomNotification.show(
+                                    context,
+                                    message:
+                                        'por_favor_ingresa_un_alias_para_guardar'
+                                            .tr(),
+                                    type: NotificationType.error,
+                                  );
                                   return;
                                 }
 

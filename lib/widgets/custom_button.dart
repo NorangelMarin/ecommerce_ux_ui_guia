@@ -43,7 +43,7 @@ class CustomButton extends StatelessWidget {
         borderSide = BorderSide(color: primaryColor, width: 2);
         break;
       case ButtonType.inactivo:
-        backgroundColor = theme.disabledColor.withOpacity(0.12);
+        backgroundColor = theme.disabledColor.withValues(alpha: 0.12);
         textColor = theme.disabledColor;
         break;
     }

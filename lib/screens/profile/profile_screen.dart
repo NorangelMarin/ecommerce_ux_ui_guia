@@ -27,7 +27,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _phoneController = TextEditingController();
 
   String _selectedPrefix = '0414';
-  final List<String> _phonePrefixes = ['0412', '0414', '0416', '0424', '0426', '0212'];
+  final List<String> _phonePrefixes = [
+    '0412',
+    '0414',
+    '0416',
+    '0424',
+    '0426',
+    '0212',
+  ];
 
   bool _isEditing = false;
   bool _isSaving = false;
@@ -56,11 +63,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         final bytes = await pickedFile.readAsBytes();
         await ref.read(authRepositoryProvider).updateProfileImage(bytes);
         if (mounted) {
-          CustomNotification.show(context, message: 'foto_actualizada_exitosamente'.tr(), type: NotificationType.info);
+          CustomNotification.show(
+            context,
+            message: 'foto_actualizada_exitosamente'.tr(),
+            type: NotificationType.info,
+          );
         }
       } catch (e) {
         if (mounted) {
-          CustomNotification.show(context, message: 'error_al_subir_foto'.tr(args: [e.toString()]), type: NotificationType.error);
+          CustomNotification.show(
+            context,
+            message: 'error_al_subir_foto'.tr(args: [e.toString()]),
+            type: NotificationType.error,
+          );
         }
       } finally {
         if (mounted) {
@@ -75,10 +90,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _saveProfile() async {
     final phoneDigits = _phoneController.text.trim();
     if (phoneDigits.length != 7) {
-      CustomNotification.show(context, message: 'el_nmero_de_telfono_debe_tener_7'.tr(), type: NotificationType.info);
+      CustomNotification.show(
+        context,
+        message: 'el_nmero_de_telfono_debe_tener_7'.tr(),
+        type: NotificationType.info,
+      );
       return;
     }
-    
+
     final fullPhone = '$_selectedPrefix$phoneDigits';
 
     setState(() {
@@ -87,19 +106,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     try {
       await ref
           .read(authRepositoryProvider)
-          .updateProfileData(
-            _nameController.text.trim(),
-            fullPhone,
-          );
+          .updateProfileData(_nameController.text.trim(), fullPhone);
       if (mounted) {
         setState(() {
           _isEditing = false;
         });
-        CustomNotification.show(context, message: 'perfil_guardado_con_éxito'.tr(), type: NotificationType.success);
+        CustomNotification.show(
+          context,
+          message: 'perfil_guardado_con_éxito'.tr(),
+          type: NotificationType.success,
+        );
       }
     } catch (e) {
       if (mounted) {
-        CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
+        CustomNotification.show(
+          context,
+          message: 'error_general'.tr(args: [e.toString()]),
+          type: NotificationType.error,
+        );
       }
     } finally {
       if (mounted) {
@@ -111,6 +135,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _showChangePasswordDialog() {
+    final user = ref.read(authStateProvider).value;
+    if (user != null) {
+      final isGoogleSignIn = user.providerData.any((p) => p.providerId == 'google.com');
+      if (isGoogleSignIn) {
+        CustomNotification.show(
+          context,
+          message: 'Los usuarios de Google deben cambiar su contraseña desde su cuenta de Google.',
+          type: NotificationType.info,
+        );
+        return;
+      }
+    }
+
     final currentController = TextEditingController();
     final newController = TextEditingController();
     bool isLoading = false;
@@ -154,23 +191,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () async {
-                        Navigator.pop(ctx);
                         try {
                           await ref
                               .read(authRepositoryProvider)
                               .sendPasswordReset();
-                          if (mounted) {
-                            CustomNotification.show(context, message: 'correo_de_recuperación_enviado'.tr(), type: NotificationType.info);
+                          if (context.mounted) {
+                            Navigator.pop(ctx);
+                            CustomNotification.show(
+                              context,
+                              message: 'correo_de_recuperación_enviado'.tr(),
+                              type: NotificationType.info,
+                            );
                           }
                         } catch (e) {
-                          if (mounted) {
-                            CustomNotification.show(context, message: 'error_general'.tr(args: [e.toString()]), type: NotificationType.error);
+                          if (context.mounted) {
+                            CustomNotification.show(
+                              context,
+                              message: e.toString(),
+                              type: NotificationType.error,
+                            );
                           }
                         }
                       },
                       child: Text(
                         'olvidaste_tu_contrasea'.tr(),
-                        style: TextStyle(color: AppColors.of(context).naranjaUnimet),
+                        style: TextStyle(
+                          color: AppColors.of(context).naranjaUnimet,
+                        ),
                       ),
                     ),
                   ),
@@ -193,8 +240,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ? null
                       : () async {
                           if (currentController.text.isEmpty ||
-                              newController.text.isEmpty)
+                              newController.text.isEmpty) {
                             return;
+                          }
                           setStateDialog(() {
                             isLoading = true;
                           });
@@ -207,17 +255,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 );
                             if (ctx.mounted) {
                               Navigator.pop(ctx);
-                              CustomNotification.show(context, message: 'contraseña_cambiada_con_éxito'.tr(), type: NotificationType.success);
+                              CustomNotification.show(
+                                context,
+                                message: 'contraseña_cambiada_con_éxito'.tr(),
+                                type: NotificationType.success,
+                              );
                             }
                           } catch (e) {
                             setStateDialog(() {
                               isLoading = false;
                             });
                             if (ctx.mounted) {
-                              ScaffoldMessenger.of(
+                              ScaffoldMessenger.of(context);
+                              CustomNotification.show(
                                 context,
+                                message: '$e',
+                                type: NotificationType.error,
                               );
-CustomNotification.show(context, message: '$e', type: NotificationType.error);
                             }
                           }
                         },
@@ -288,13 +342,16 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
     // Initialize controllers once data is loaded
     if (!_controllersInitialized && (userData != null || user != null)) {
       _nameController.text = displayName;
-      
+
       String phone = phoneNumber;
-      phone = phone.replaceAll(RegExp(r'\D'), ''); // Remove all non-digits (like +, -, spaces)
+      phone = phone.replaceAll(
+        RegExp(r'\D'),
+        '',
+      ); // Remove all non-digits (like +, -, spaces)
       if (phone.startsWith('58')) {
         phone = '0${phone.substring(2)}'; // Convert 58414... to 0414...
       }
-      
+
       if (phone.length >= 11) {
         String prefix = phone.substring(0, 4);
         if (_phonePrefixes.contains(prefix)) {
@@ -364,11 +421,11 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
                               )
                             : photoUrl != null
                             ? (photoUrl.startsWith('data:image')
-                                ? Image.memory(
-                                    base64Decode(photoUrl.split(',').last),
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.network(photoUrl, fit: BoxFit.cover))
+                                  ? Image.memory(
+                                      base64Decode(photoUrl.split(',').last),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.network(photoUrl, fit: BoxFit.cover))
                             : Container(
                                 color: AppColors.of(context).fondoTarjetas,
                                 child: Icon(
@@ -458,11 +515,16 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.of(context).naranjaUnimet),
+                          side: BorderSide(
+                            color: AppColors.of(context).naranjaUnimet,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           minimumSize: Size(0, 36),
                         ),
                       ),
@@ -489,10 +551,7 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 3,
-                        child: _buildPrefixSelector(),
-                      ),
+                      Expanded(flex: 3, child: _buildPrefixSelector()),
                       SizedBox(width: 12),
                       Expanded(
                         flex: 7,
@@ -637,7 +696,10 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.of(context).naranjaUnimet),
+            Icon(
+              Icons.chevron_right,
+              color: AppColors.of(context).naranjaUnimet,
+            ),
           ],
         ),
       ),
@@ -661,7 +723,9 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
           padding: EdgeInsets.symmetric(horizontal: 8),
           height: 48, // Ajustar altura para igualar CustomTextField
           decoration: BoxDecoration(
-            color: _isEditing ? AppColors.of(context).blanco : AppColors.of(context).fondoTarjetas,
+            color: _isEditing
+                ? AppColors.of(context).blanco
+                : AppColors.of(context).fondoTarjetas,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: AppColors.of(context).sombras.withValues(alpha: 0.2),
@@ -672,7 +736,10 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
               child: DropdownButton<String>(
                 value: _selectedPrefix,
                 isExpanded: true,
-                icon: Icon(Icons.keyboard_arrow_down, color: AppColors.of(context).sombras),
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: AppColors.of(context).sombras,
+                ),
                 onChanged: _isEditing
                     ? (String? newValue) {
                         if (newValue != null) {
@@ -682,7 +749,9 @@ CustomNotification.show(context, message: '$e', type: NotificationType.error);
                         }
                       }
                     : null,
-                items: _phonePrefixes.map<DropdownMenuItem<String>>((String value) {
+                items: _phonePrefixes.map<DropdownMenuItem<String>>((
+                  String value,
+                ) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: TextStyle(fontSize: 14)),

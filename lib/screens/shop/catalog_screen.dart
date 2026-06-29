@@ -59,7 +59,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
             if (mounted) setState(() => _isListening = false);
           }
         },
-        onError: (val) => print('onError: $val'),
+        onError: (val) => debugPrint('onError: $val'),
       );
       if (available) {
         if (mounted) setState(() => _isListening = true);
@@ -158,7 +158,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
 
   void _showFilterModal(List<CategoryModel> categories) {
     String? tempCategory = _selectedCategory;
-    double tempMaxPrice = _maxPrice ?? 2500.0;
+    double tempMaxPrice = _maxPrice ?? 5000.0;
 
     showModalBottomSheet(
       context: context,
